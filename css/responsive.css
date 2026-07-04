@@ -1,0 +1,91 @@
+/* =========================================================
+   کتاب‌باز — تنظیمات ریسپانسیو (موبایل‌محور)
+   ========================================================= */
+
+@media (max-width: 960px) {
+  .book-detail {
+    grid-template-columns: 1fr;
+  }
+  .book-detail__cover {
+    position: static;
+    max-width: 220px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .main-nav {
+    display: none;
+  }
+
+  .hero {
+    padding: 44px 0 76px;
+  }
+
+  .hero h1 {
+    font-size: 1.6rem;
+  }
+
+  .search-bar {
+    margin-top: -36px;
+  }
+
+  .filters {
+    gap: 8px;
+  }
+
+  .filters select {
+    flex: 1 1 45%;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .book-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+  }
+
+  .book-card__body {
+    padding: 10px 12px 12px;
+  }
+
+  .book-detail h1 {
+    font-size: 1.5rem;
+  }
+
+  .kb-player {
+    padding: 16px 14px 12px;
+  }
+
+  .kb-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1.3rem;
+  }
+
+  .kb-btn--play {
+    width: 60px;
+    height: 60px;
+  }
+
+  .site-footer__inner {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .book-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .brand span.brand__text {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title id="doc-title">دسته‌بندی کتاب‌ها | کتاب‌باز</title>
+  <meta name="description" id="doc-description" content="مرور کتاب‌ها بر اساس ژانر، نوع محتوا، زبان و امتیاز در کتاب‌باز.">
+  <meta name="theme-color" content="#1f4d3d">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" href="../assets/icons/icon-192.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="../index.html" class="brand">
+        <span class="brand__mark">ک</span>
+        <span class="brand__text">کتاب‌باز</span>
+      </a>
+      <nav class="main-nav" aria-label="ناوبری اصلی">
+        <a href="../index.html">خانه</a>
+        <a href="../index.html#podcasts">پادکست‌ها</a>
+        <a href="category.html?rating=top">کتاب‌های برتر</a>
+        <a href="category.html?genre=poetry">شعر و ادبیات</a>
+      </nav>
+      <a class="btn-telegram" href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام ↗</a>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:34px;">
+    <p class="breadcrumb"><a href="../index.html">خانه</a> › <span id="category-crumb">دسته‌بندی</span></p>
+    <h1 class="section-title" id="category-title">فهرست کتاب‌ها</h1>
+    <p class="section-sub" id="category-sub">کتاب‌ها را بر اساس علاقه‌ات فیلتر کن.</p>
+
+    <div class="filters" role="group" aria-label="فیلتر کتاب‌ها">
+      <select id="filter-genre" aria-label="ژانر">
+        <option value="all">همه‌ی ژانرها</option>
+        <option value="novel">رمان و داستان</option>
+        <option value="science">علمی و آموزشی</option>
+        <option value="self-growth">توسعه فردی</option>
+        <option value="history-philosophy">تاریخ و فلسفه</option>
+        <option value="poetry">شعر و ادبیات</option>
+      </select>
+      <select id="filter-type" aria-label="نوع محتوا">
+        <option value="all">همه‌ی محتواها</option>
+        <option value="review">نقد و بررسی</option>
+        <option value="summary">خلاصه کتاب</option>
+        <option value="intro">معرفی کتاب</option>
+      </select>
+      <select id="filter-language" aria-label="زبان">
+        <option value="all">همه‌ی زبان‌ها</option>
+        <option value="fa">فارسی</option>
+        <option value="translated">ترجمه</option>
+      </select>
+      <select id="filter-rating" aria-label="امتیاز">
+        <option value="all">همه‌ی امتیازها</option>
+        <option value="top">کتاب‌های برتر</option>
+        <option value="special">پیشنهاد ویژه</option>
+      </select>
+    </div>
+
+    <div class="results-bar">
+      <span></span>
+      <span id="result-count">— کتاب</span>
+    </div>
+
+    <div id="book-grid" class="book-grid">
+      <p class="empty-state">در حال بارگذاری کتاب‌ها…</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>
+        <div class="brand" style="margin-bottom:10px;">
+          <span class="brand__mark">ک</span>
+          <span>کتاب‌باز</span>
+        </div>
+        <p style="max-width:320px;color:#9fae9e;font-size:0.88rem;">کتاب‌باز جایی برای کشف، خواندن و شنیدن کتاب‌های خوب است.</p>
+      </div>
+      <div>
+        <p style="margin:0 0 10px;font-weight:700;">دسترسی سریع</p>
+        <p style="margin:0 0 8px;"><a href="category.html?genre=novel">رمان و داستان</a></p>
+        <p style="margin:0 0 8px;"><a href="category.html?genre=poetry">شعر و ادبیات</a></p>
+        <p style="margin:0;"><a href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام</a></p>
+      </div>
+    </div>
+    <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
+  </footer>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/seo.js"></script>
+  <script src="../js/books.js"></script>
+  <script>
+    (async function initCategoryPage() {
+      KetabBazStorage.getUserId();
+
+      const params = new URLSearchParams(window.location.search);
+      const grid = document.getElementById("book-grid");
+      const filterGenre = document.getElementById("filter-genre");
+      const filterType = document.getElementById("filter-type");
+      const filterLanguage = document.getElementById("filter-language");
+      const filterRating = document.getElementById("filter-rating");
+      const resultCount = document.getElementById("result-count");
+
+      ["genre", "type", "language", "rating"].forEach((key) => {
+        const value = params.get(key);
+        const el = document.getElementById(`filter-${key}`);
+        if (value && el) el.value = value;
+      });
+
+      let allBooks = [];
+      try {
+        allBooks = await KetabBazBooks.fetchBooks("../data/books.json");
+      } catch (e) {
+        grid.innerHTML = `<p class="empty-state">مشکلی در بارگذاری کتاب‌ها پیش آمد.</p>`;
+        return;
+      }
+
+      const activeGenre = filterGenre.value;
+      if (activeGenre !== "all") {
+        document.getElementById("category-title").textContent = KetabBazBooks.genreLabel(activeGenre);
+        document.getElementById("category-crumb").textContent = KetabBazBooks.genreLabel(activeGenre);
+        KetabBazSEO.applyPageMeta({
+          title: `${KetabBazBooks.genreLabel(activeGenre)} | کتاب‌باز`,
+          description: `فهرست کتاب‌های ${KetabBazBooks.genreLabel(activeGenre)} در کتاب‌باز.`,
+          url: window.location.href,
+        });
+      }
+
+      function currentFilters() {
+        return {
+          genre: filterGenre.value,
+          type: filterType.value,
+          language: filterLanguage.value,
+          rating: filterRating.value,
+        };
+      }
+
+      function applyFilters() {
+        const filtered = KetabBazBooks.filterBooks(allBooks, currentFilters());
+        KetabBazBooks.renderGrid(grid, filtered, { pagesPrefix: "", assetsPrefix: "../" });
+        resultCount.textContent = `${filtered.length} کتاب`;
+
+        const url = new URL(window.location.href);
+        Object.entries(currentFilters()).forEach(([k, v]) => {
+          if (v === "all") url.searchParams.delete(k);
+          else url.searchParams.set(k, v);
+        });
+        window.history.replaceState({}, "", url);
+      }
+
+      [filterGenre, filterType, filterLanguage, filterRating].forEach((el) =>
+        el.addEventListener("change", applyFilters)
+      );
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>

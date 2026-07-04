@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title id="doc-title">کتاب‌باز</title>
+  <meta name="description" id="doc-description" content="">
+  <meta name="theme-color" content="#1f4d3d">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" href="../assets/icons/icon-192.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="../index.html" class="brand">
+        <span class="brand__mark">ک</span>
+        <span class="brand__text">کتاب‌باز</span>
+      </a>
+      <nav class="main-nav" aria-label="ناوبری اصلی">
+        <a href="../index.html">خانه</a>
+        <a href="../index.html#podcasts">پادکست‌ها</a>
+        <a href="category.html?rating=top">کتاب‌های برتر</a>
+        <a href="category.html?genre=poetry">شعر و ادبیات</a>
+      </nav>
+      <a class="btn-telegram" href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام ↗</a>
+    </div>
+  </header>
+
+  <main class="container" id="book-root">
+    <p class="breadcrumb" id="breadcrumb">در حال بارگذاری…</p>
+    <div id="book-detail-content">
+      <p class="empty-state">در حال بارگذاری اطلاعات کتاب…</p>
+    </div>
+
+    <section class="related-section" id="related-section" hidden>
+      <h2>کتاب‌های مرتبط</h2>
+      <div id="related-grid" class="book-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>
+        <div class="brand" style="margin-bottom:10px;">
+          <span class="brand__mark">ک</span>
+          <span>کتاب‌باز</span>
+        </div>
+        <p style="max-width:320px;color:#9fae9e;font-size:0.88rem;">کتاب‌باز جایی برای کشف، خواندن و شنیدن کتاب‌های خوب است.</p>
+      </div>
+      <div>
+        <p style="margin:0 0 10px;font-weight:700;">دسترسی سریع</p>
+        <p style="margin:0 0 8px;"><a href="category.html?genre=novel">رمان و داستان</a></p>
+        <p style="margin:0 0 8px;"><a href="category.html?genre=poetry">شعر و ادبیات</a></p>
+        <p style="margin:0;"><a href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام</a></p>
+      </div>
+    </div>
+    <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
+  </footer>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/seo.js"></script>
+  <script src="../js/books.js"></script>
+  <script src="../js/audio-player.js"></script>
+  <script>
+    (async function initBookPage() {
+      KetabBazStorage.getUserId();
+
+      const params = new URLSearchParams(window.location.search);
+      const bookId = params.get("id");
+      const contentEl = document.getElementById("book-detail-content");
+      const breadcrumbEl = document.getElementById("breadcrumb");
+
+      if (!bookId) {
+        contentEl.innerHTML = `<p class="empty-state">شناسه‌ی کتاب مشخص نشده است.</p>`;
+        return;
+      }
+
+      let books;
+      try {
+        books = await KetabBazBooks.fetchBooks("../data/books.json");
+      } catch (e) {
+        contentEl.innerHTML = `<p class="empty-state">مشکلی در بارگذاری اطلاعات کتاب پیش آمد.</p>`;
+        return;
+      }
+
+      const book = KetabBazBooks.findById(books, bookId);
+      if (!book) {
+        contentEl.innerHTML = `<p class="empty-state">کتابی با این شناسه پیدا نشد.</p>`;
+        return;
+      }
+
+      const pageUrl = window.location.href;
+
+      KetabBazSEO.applyPageMeta({
+        title: `${book.title} - نوشته‌ی ${book.author} | کتاب‌باز`,
+        description: book.summary,
+        keywords: book.tags,
+        image: `../${book.cover}`,
+        url: pageUrl,
+      });
+      KetabBazSEO.injectJSONLD(KetabBazSEO.buildBookSchema(book, pageUrl), "kb-book-schema");
+      KetabBazSEO.injectJSONLD(
+        KetabBazSEO.buildBreadcrumb([
+          { name: "خانه", url: "../index.html" },
+          { name: KetabBazBooks.genreLabel(book.genre), url: `category.html?genre=${book.genre}` },
+          { name: book.title, url: pageUrl },
+        ]),
+        "kb-breadcrumb-schema"
+      );
+
+      breadcrumbEl.innerHTML = `
+        <a href="../index.html">خانه</a> ›
+        <a href="category.html?genre=${book.genre}">${KetabBazBooks.genreLabel(book.genre)}</a> ›
+        <span>${book.title}</span>
+      `;
+
+      const isFav = KetabBazStorage.isFavorite(book.id);
+
+      contentEl.innerHTML = `
+        <article class="book-detail">
+          <div class="book-detail__cover">
+            <img src="../${book.cover}" alt="جلد کتاب ${book.title}" width="280" height="400">
+          </div>
+          <div class="book-detail__info">
+            <h1>${book.title}</h1>
+            <p class="book-detail__author">نوشته‌ی ${book.author} · <span class="score">★ ${book.score}</span></p>
+            <div class="book-detail__tags">
+              <span class="tag">${KetabBazBooks.genreLabel(book.genre)}</span>
+              <span class="tag tag--muted">${KetabBazBooks.typeLabel(book.type)}</span>
+              <span class="tag tag--muted">${KetabBazBooks.languageLabel(book.language)}</span>
+            </div>
+            <p class="book-detail__summary">${book.summary}</p>
+
+            <div class="highlights">
+              <h2>نکات مهم کتاب</h2>
+              <ul>
+                ${book.highlights.map((h) => `<li>${h}</li>`).join("")}
+              </ul>
+            </div>
+
+            <div id="audio-mount"></div>
+
+            <div class="detail-actions">
+              <button class="btn ${isFav ? "btn--primary" : "btn--outline"}" id="fav-toggle">
+                ${isFav ? "♥ در علاقه‌مندی‌ها" : "♡ افزودن به علاقه‌مندی‌ها"}
+              </button>
+              ${book.pdf ? `<a class="btn btn--accent" href="../${book.pdf}" target="_blank" rel="noopener">دانلود PDF</a>` : ""}
+              <a class="btn btn--outline" href="${book.telegram}" target="_blank" rel="noopener">مشاهده در تلگرام</a>
+            </div>
+          </div>
+        </article>
+      `;
+
+      document.getElementById("fav-toggle").addEventListener("click", (e) => {
+        const active = KetabBazStorage.toggleFavorite(book.id);
+        e.target.className = `btn ${active ? "btn--primary" : "btn--outline"}`;
+        e.target.textContent = active ? "♥ در علاقه‌مندی‌ها" : "♡ افزودن به علاقه‌مندی‌ها";
+      });
+
+      if (book.audio) {
+        new KetabBazAudioPlayer(document.getElementById("audio-mount"), [
+          { id: book.id, title: book.title, subtitle: book.author, src: `../${book.audio}` },
+        ]);
+      }
+
+      const related = KetabBazBooks.findRelated(books, book);
+      if (related.length) {
+        document.getElementById("related-section").hidden = false;
+        KetabBazBooks.renderGrid(document.getElementById("related-grid"), related, {
+          pagesPrefix: "",
+          assetsPrefix: "../",
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "کتاب‌باز",
+  "short_name": "کتاب‌باز",
+  "description": "مرجع معرفی، نقد و خلاصه‌ی کتاب فارسی همراه با کتاب صوتی و پادکست ادبی.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f2e7",
+  "theme_color": "#1f4d3d",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

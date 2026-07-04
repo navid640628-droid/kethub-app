@@ -1,0 +1,22 @@
+{
+  "genres": [
+    { "id": "novel", "label": "رمان و داستان", "icon": "📖" },
+    { "id": "science", "label": "علمی و آموزشی", "icon": "🔬" },
+    { "id": "self-growth", "label": "توسعه فردی", "icon": "🌱" },
+    { "id": "history-philosophy", "label": "تاریخ و فلسفه", "icon": "🏛" },
+    { "id": "poetry", "label": "شعر و ادبیات", "icon": "🖋" }
+  ],
+  "contentTypes": [
+    { "id": "review", "label": "نقد و بررسی" },
+    { "id": "summary", "label": "خلاصه کتاب" },
+    { "id": "intro", "label": "معرفی کتاب" }
+  ],
+  "languages": [
+    { "id": "fa", "label": "فارسی" },
+    { "id": "translated", "label": "ترجمه" }
+  ],
+  "ratings": [
+    { "id": "top", "label": "کتاب‌های برتر" },
+    { "id": "special", "label": "پیشنهاد ویژه" }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "jalase-ketabkhani-1",
+    "title": "شب‌های کتاب‌باز - قسمت ۱: صد سال تنهایی",
+    "host": "کتاب‌باز",
+    "cover": "assets/covers/podcast-1.svg",
+    "audio": "assets/audio/podcast/ep1.mp3",
+    "duration": 1860,
+    "description": "گفت‌وگو درباره‌ی رئالیسم جادویی و دنیای ماکوندو در رمان صد سال تنهایی.",
+    "publishedAt": "2026-05-01",
+    "telegram": "https://t.me/kmketab",
+    "tags": ["پادکست", "مارکز", "رئالیسم جادویی"]
+  },
+  {
+    "id": "jalase-ketabkhani-2",
+    "title": "شب‌های کتاب‌باز - قسمت ۲: فلسفه‌ی پوچی در آثار کامو",
+    "host": "کتاب‌باز",
+    "cover": "assets/covers/podcast-2.svg",
+    "audio": "assets/audio/podcast/ep2.mp3",
+    "duration": 2100,
+    "description": "بررسی مفهوم پوچی در بیگانه و افسانه‌ی سیزیف اثر آلبر کامو.",
+    "publishedAt": "2026-05-15",
+    "telegram": "https://t.me/kmketab",
+    "tags": ["پادکست", "کامو", "فلسفه"]
+  }
+]
