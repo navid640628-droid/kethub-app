@@ -174,5 +174,32 @@
   ],
   "telegram": "https://t.me/kmketab",
   "tags": ["غزالی", "عرفان", "اخلاق اسلامی", "متون کلاسیک فارسی"]
+},
+  {
+  "id": "maghaze-khodkoshi",
+  "title": "مغازه‌ی خودکشی",
+  "author": "ژان تولی",
+  "genre": "novel",
+  "language": "translated",
+  "type": "review",
+  "rating": "special",
+  "score": 4.3,
+  "cover": "assets/covers/maghaze-khodkoshi.jpg",
+  "audio": [
+    { "title": "فصل اول", "src": "assets/audio/maghaze-khodkoshi/ch1.mp3" },
+    { "title": "فصل دوم", "src": "assets/audio/maghaze-khodkoshi/ch2.mp3" },
+    { "title": "فصل سوم", "src": "assets/audio/maghaze-khodkoshi/ch3.mp3" },
+    { "title": "فصل چهارم", "src": "assets/audio/maghaze-khodkoshi/ch4.mp3" }
+  ],
+  "pdf": null,
+  "summary": "خانواده‌ی توواش نسل‌هاست مغازه‌ای در پاریسی غم‌زده و آینده‌نگر اداره می‌کنند که همه‌چیز برای پایان‌دادن به زندگی می‌فروشد؛ تا آن‌که تولد پسر کوچک خانواده، آلن، با خوش‌بینی سرکش و غیرمنتظره‌اش، بنیان کسب‌وکار خانوادگی را به‌آرامی می‌لرزاند.",
+  "highlights": [
+    "طنز سیاه در بستری غیرمنتظره: کسب‌وکار خانوادگی فروش وسایل خودکشی",
+    "شخصیت آلن به‌عنوان نماد امید در دنیایی سرد و ناامید",
+    "نقدی طعنه‌آمیز بر مصرف‌گرایی و بازاری‌شدن حتی مرگ",
+    "پایان‌بندی غیرمنتظره که لحن کتاب را از تراژدی به امید تغییر می‌دهد"
+  ],
+  "telegram": "https://t.me/kmketab",
+  "tags": ["ژان تولی", "طنز سیاه", "ادبیات فرانسه", "کتاب صوتی"]
 }
 ]
