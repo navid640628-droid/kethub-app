@@ -106,8 +106,8 @@ class KetabBazAudioPlayer {
     this.audio.addEventListener("loadedmetadata", () => {
       this.els.duration.textContent = this._formatTime(this.audio.duration);
       const saved = KetabBazStorage.getPlaybackPosition(this._trackKey());
-      if (saved && saved < this.audio.duration - 2) {
-        this.audio.currentTime = saved;
+      if (saved && (!this._isValidDuration() || saved < this.audio.duration - 2)) {
+        this._seekToTime(saved);
       }
     });
 
@@ -163,21 +163,16 @@ class KetabBazAudioPlayer {
       const clientX = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX);
       const ratio = seekFromEvent(clientX);
       this._setBarRatio(ratio);
-      if (this.audio.duration) {
-        this.audio.currentTime = ratio * this.audio.duration;
-      }
+      this._seekToRatio(ratio);
       this.isSeeking = false;
     };
 
     bar.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerup", onPointerUp);
-    bar.addEventListener("touchstart", onPointerDown, { passive: true });
-    window.addEventListener("touchmove", onPointerMove, { passive: true });
-    window.addEventListener("touchend", onPointerUp);
 
     bar.addEventListener("keydown", (e) => {
-      if (!this.audio.duration) return;
+      if (!this._isValidDuration()) return;
       if (e.key === "ArrowRight") this.seekBy(-5);
       if (e.key === "ArrowLeft") this.seekBy(5);
     });
@@ -190,6 +185,49 @@ class KetabBazAudioPlayer {
 
   _trackKey() {
     return this.currentTrack ? `track:${this.currentTrack.id}` : "track:unknown";
+  }
+
+  _isValidDuration() {
+    return Number.isFinite(this.audio.duration) && this.audio.duration > 0;
+  }
+
+  _seekToTime(seconds) {
+    if (this._isValidDuration()) {
+      this.audio.currentTime = Math.min(this.audio.duration, Math.max(0, seconds));
+      return;
+    }
+    this._pendingSeekSeconds = seconds;
+    this._fixUnknownDuration();
+  }
+
+  _seekToRatio(ratio) {
+    if (this._isValidDuration()) {
+      this.audio.currentTime = ratio * this.audio.duration;
+      return;
+    }
+    this._pendingSeekRatio = ratio;
+    this._fixUnknownDuration();
+  }
+
+  _fixUnknownDuration() {
+    if (this._fixingDuration) return;
+    this._fixingDuration = true;
+    const resumeAt = this.audio.currentTime;
+    const onDurationChange = () => {
+      if (!this._isValidDuration()) return;
+      this.audio.removeEventListener("durationchange", onDurationChange);
+      this._fixingDuration = false;
+      let target = resumeAt;
+      if (this._pendingSeekSeconds != null) target = this._pendingSeekSeconds;
+      else if (this._pendingSeekRatio != null) target = this._pendingSeekRatio * this.audio.duration;
+      this._pendingSeekSeconds = null;
+      this._pendingSeekRatio = null;
+      this.audio.currentTime = Math.min(this.audio.duration, Math.max(0, target));
+    };
+    this.audio.addEventListener("durationchange", onDurationChange);
+    // ترفند رایج: پرش به یک زمان بسیار بزرگ، مرورگر را مجبور می‌کند کل فایل
+    // را اسکن کرده و مدت‌زمان واقعی را محاسبه کند (رویداد durationchange را فعال می‌کند).
+    this.audio.currentTime = 1e9;
   }
 
   _renderChapterList() {
@@ -241,7 +279,7 @@ class KetabBazAudioPlayer {
   }
 
   _updateBar() {
-    if (!this.audio.duration) return;
+    if (!this._isValidDuration()) return;
     const ratio = this.audio.currentTime / this.audio.duration;
     this._setBarRatio(ratio);
     this.els.currentTime.textContent = this._formatTime(this.audio.currentTime);
@@ -256,6 +294,9 @@ class KetabBazAudioPlayer {
     this.els.subtitle.textContent = track.subtitle || "";
     this._setBarRatio(0);
     this.els.currentTime.textContent = "۰:۰۰";
+    this._pendingSeekRatio = null;
+    this._pendingSeekSeconds = null;
+    this._fixingDuration = false;
     this._syncActiveChapter();
     if (autoplay) {
       this.audio.play().catch(() => {});
@@ -276,7 +317,7 @@ class KetabBazAudioPlayer {
   }
 
   seekBy(seconds) {
-    if (!this.audio.duration) return;
+    if (!this._isValidDuration()) return;
     this.audio.currentTime = Math.min(this.audio.duration, Math.max(0, this.audio.currentTime + seconds));
   }
 
