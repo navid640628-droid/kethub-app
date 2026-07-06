@@ -45,9 +45,35 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // پاسخی که ممکن است در زنجیره‌اش ریدایرکت داشته باشد (مثلاً حذف خودکار
+  // index.html توسط Cloudflare Pages) را قبل از respondWith "تمیز" می‌کنیم،
+  // چون مرورگرها اجازه نمی‌دهند پاسخ ریدایرکت‌شده مستقیم به یک درخواست
+  // ناوبری (navigation) داده شود و در غیر این صورت با خطای ERR_FAILED مواجه می‌شویم.
+  function stripRedirect(response) {
+    if (response && response.redirected) {
+      return response.blob().then((body) => new Response(body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      }));
+    }
+    return response;
+  }
+
+  // درخواست‌های ناوبری (باز کردن صفحه): شبکه اول، با بازگشت به کش در صورت شکست
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then(stripRedirect)
+        .catch(() => caches.match(request).then((cached) => cached || caches.match("./index.html")))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(request).then((cached) => {
       const networkFetch = fetch(request)
+        .then((response) => stripRedirect(response))
         .then((response) => {
           if (response && response.status === 200) {
             const clone = response.clone();
