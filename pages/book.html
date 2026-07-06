@@ -15,13 +15,13 @@
 
   <header class="site-header">
     <div class="container site-header__inner">
-      <a href="../index.html" class="brand">
+      <a href="../" class="brand">
         <span class="brand__mark">ک</span>
         <span class="brand__text">کتاب‌باز</span>
       </a>
       <nav class="main-nav" aria-label="ناوبری اصلی">
-        <a href="../index.html">خانه</a>
-        <a href="../index.html#podcasts">پادکست‌ها</a>
+        <a href="../">خانه</a>
+        <a href="../#podcasts">پادکست‌ها</a>
         <a href="category.html?rating=top">کتاب‌های برتر</a>
         <a href="category.html?genre=poetry">شعر و ادبیات</a>
       </nav>
@@ -104,7 +104,7 @@
       KetabBazSEO.injectJSONLD(KetabBazSEO.buildBookSchema(book, pageUrl), "kb-book-schema");
       KetabBazSEO.injectJSONLD(
         KetabBazSEO.buildBreadcrumb([
-          { name: "خانه", url: "../index.html" },
+          { name: "خانه", url: "../" },
           { name: KetabBazBooks.genreLabel(book.genre), url: `category.html?genre=${book.genre}` },
           { name: book.title, url: pageUrl },
         ]),
@@ -112,7 +112,7 @@
       );
 
       breadcrumbEl.innerHTML = `
-        <a href="../index.html">خانه</a> ›
+        <a href="../">خانه</a> ›
         <a href="category.html?genre=${book.genre}">${KetabBazBooks.genreLabel(book.genre)}</a> ›
         <span>${book.title}</span>
       `;
@@ -161,9 +161,20 @@
       });
 
       if (book.audio) {
-        new KetabBazAudioPlayer(document.getElementById("audio-mount"), [
-          { id: book.id, title: book.title, subtitle: book.author, src: `../${book.audio}` },
-        ]);
+        let tracks;
+        if (Array.isArray(book.audio)) {
+          // چند فصل: هر آیتم { title, src }
+          tracks = book.audio.map((chapter, i) => ({
+            id: `${book.id}-ch${i + 1}`,
+            title: chapter.title || `فصل ${i + 1}`,
+            subtitle: `${book.title} · فصل ${i + 1} از ${book.audio.length}`,
+            src: `../${chapter.src}`,
+          }));
+        } else {
+          // یک فایل صوتی واحد
+          tracks = [{ id: book.id, title: book.title, subtitle: book.author, src: `../${book.audio}` }];
+        }
+        new KetabBazAudioPlayer(document.getElementById("audio-mount"), tracks);
       }
 
       const related = KetabBazBooks.findRelated(books, book);
