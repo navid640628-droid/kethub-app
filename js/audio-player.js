@@ -205,25 +205,25 @@ class KetabBazAudioPlayer {
       this.audio.currentTime = ratio * this.audio.duration;
       return;
     }
-  //  this._pendingSeekRatio = ratio;
-  //  this._fixUnknownDuration();
+    this._pendingSeekRatio = ratio;
+    this._fixUnknownDuration();
   }
 
- // _fixUnknownDuration() {
- //   if (this._fixingDuration) return;
- //   this._fixingDuration = true;
- //   const resumeAt = this.audio.currentTime;
-//    const onDurationChange = () => {
-  //    if (!this._isValidDuration()) return;
-//      this.audio.removeEventListener("durationchange", onDurationChange);
-//      this._fixingDuration = false;
-//      let target = resumeAt;
- //     if (this._pendingSeekSeconds != null) target = this._pendingSeekSeconds;
- //     else if (this._pendingSeekRatio != null) target = this._pendingSeekRatio * this.audio.duration;
- //     this._pendingSeekSeconds = null;
-  //    this._pendingSeekRatio = null;
-  //    this.audio.currentTime = Math.min(this.audio.duration, Math.max(0, target));
-  //  };
+  _fixUnknownDuration() {
+    if (this._fixingDuration) return;
+    this._fixingDuration = true;
+    const resumeAt = this.audio.currentTime;
+    const onDurationChange = () => {
+      if (!this._isValidDuration()) return;
+      this.audio.removeEventListener("durationchange", onDurationChange);
+      this._fixingDuration = false;
+      let target = resumeAt;
+      if (this._pendingSeekSeconds != null) target = this._pendingSeekSeconds;
+      else if (this._pendingSeekRatio != null) target = this._pendingSeekRatio * this.audio.duration;
+      this._pendingSeekSeconds = null;
+      this._pendingSeekRatio = null;
+      this.audio.currentTime = Math.min(this.audio.duration, Math.max(0, target));
+    };
     this.audio.addEventListener("durationchange", onDurationChange);
     // ترفند رایج: پرش به یک زمان بسیار بزرگ، مرورگر را مجبور می‌کند کل فایل
     // را اسکن کرده و مدت‌زمان واقعی را محاسبه کند (رویداد durationchange را فعال می‌کند).
