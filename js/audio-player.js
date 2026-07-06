@@ -22,6 +22,9 @@ class KetabBazAudioPlayer {
 
     this._render();
     this._bindEvents();
+    if (this.tracks.length > 1) {
+      this._renderChapterList();
+    }
     this._loadTrack(this.currentIndex, false);
   }
 
@@ -189,6 +192,44 @@ class KetabBazAudioPlayer {
     return this.currentTrack ? `track:${this.currentTrack.id}` : "track:unknown";
   }
 
+  _renderChapterList() {
+    const listHtml = `
+      <div class="kb-chapters" data-el="chapters" role="listbox" aria-label="فهرست فصل‌ها">
+        ${this.tracks
+          .map(
+            (t, i) => `
+          <button type="button" class="kb-chapter-item" data-chapter-index="${i}" role="option" aria-selected="false">
+            <span class="kb-chapter-item__index">${i + 1}</span>
+            <span class="kb-chapter-item__title">${t.title}</span>
+            <span class="kb-chapter-item__playing" data-el="playing-badge">▶ در حال پخش</span>
+          </button>
+        `
+          )
+          .join("")}
+      </div>
+    `;
+    this.mountEl.insertAdjacentHTML("beforeend", listHtml);
+    this.chapterItems = Array.from(this.mountEl.querySelectorAll("[data-chapter-index]"));
+    this.chapterItems.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.getAttribute("data-chapter-index"));
+        this.playTrack(idx);
+      });
+    });
+    this._syncActiveChapter();
+  }
+
+  _syncActiveChapter() {
+    if (!this.chapterItems) return;
+    this.chapterItems.forEach((btn, i) => {
+      const isActive = i === this.currentIndex;
+      btn.classList.toggle("is-active", isActive);
+      btn.setAttribute("aria-selected", String(isActive));
+      const badge = btn.querySelector('[data-el="playing-badge"]');
+      if (badge) badge.style.display = isActive ? "inline" : "none";
+    });
+  }
+
   _setBarRatio(ratio, previewOnly = false) {
     const pct = (ratio * 100).toFixed(2);
     this.els.fill.style.width = pct + "%";
@@ -215,6 +256,7 @@ class KetabBazAudioPlayer {
     this.els.subtitle.textContent = track.subtitle || "";
     this._setBarRatio(0);
     this.els.currentTime.textContent = "۰:۰۰";
+    this._syncActiveChapter();
     if (autoplay) {
       this.audio.play().catch(() => {});
     }
