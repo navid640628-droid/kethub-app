@@ -104,12 +104,19 @@ class KetabBazAudioPlayer {
     });
 
     this.audio.addEventListener("loadedmetadata", () => {
-      this.els.duration.textContent = this._formatTime(this.audio.duration);
+      this.els.duration.textContent = this._formatTime(this._getReliableDuration() || 0);
       const saved = KetabBazStorage.getPlaybackPosition(this._trackKey());
-      if (saved && (!this._isValidDuration() || saved < this.audio.duration - 2)) {
+      const duration = this._getReliableDuration();
+      if (saved && (duration == null || saved < duration - 2)) {
         this._seekToTime(saved);
       }
     });
+
+    // به‌محض این‌که بافر بیشتری برسد یا مدت‌زمان واقعی مشخص شود، هر پرش
+    // معلق (که به‌خاطر نامعلوم‌بودن duration اجرا نشده بود) را انجام می‌دهیم
+    this.audio.addEventListener("progress", () => this._tryPendingSeek());
+    this.audio.addEventListener("durationchange", () => this._tryPendingSeek());
+    this.audio.addEventListener("canplay", () => this._tryPendingSeek());
 
     this.audio.addEventListener("timeupdate", () => {
       if (this.isSeeking) return;
@@ -187,47 +194,59 @@ class KetabBazAudioPlayer {
     return this.currentTrack ? `track:${this.currentTrack.id}` : "track:unknown";
   }
 
+  /**
+   * برخی فایل‌های mp3 (بدون هدر VBR صحیح) مدت‌زمان‌شان را به‌درستی از طریق
+   * audio.duration اعلام نمی‌کنند (مقدار Infinity یا NaN می‌ماند)، مخصوصاً در کروم.
+   * در این‌جا به‌جای تکیه‌ی صرف به audio.duration، بازه‌های واقعاً بافرشده
+   * (audio.seekable) را هم به‌عنوان منبع دوم بررسی می‌کنیم - بدون هیچ پرش
+   * مصنوعی که ممکن است در برخی مرورگرها باعث خطای شبکه و قفل‌شدن پخش شود.
+   */
+  _getReliableDuration() {
+    if (Number.isFinite(this.audio.duration) && this.audio.duration > 0) {
+      return this.audio.duration;
+    }
+    if (this.audio.seekable && this.audio.seekable.length > 0) {
+      const end = this.audio.seekable.end(this.audio.seekable.length - 1);
+      if (Number.isFinite(end) && end > 0) return end;
+    }
+    return null;
+  }
+
   _isValidDuration() {
-    return Number.isFinite(this.audio.duration) && this.audio.duration > 0;
+    return this._getReliableDuration() != null;
   }
 
   _seekToTime(seconds) {
-    if (this._isValidDuration()) {
-      this.audio.currentTime = Math.min(this.audio.duration, Math.max(0, seconds));
+    const duration = this._getReliableDuration();
+    if (duration != null) {
+      this.audio.currentTime = Math.min(duration, Math.max(0, seconds));
       return;
     }
+    // مدت‌زمان هنوز مشخص نیست؛ به‌محض این‌که بافر بیشتری برسد دوباره امتحان می‌کنیم
     this._pendingSeekSeconds = seconds;
-    this._fixUnknownDuration();
+    this._pendingSeekRatio = null;
   }
 
   _seekToRatio(ratio) {
-    if (this._isValidDuration()) {
-      this.audio.currentTime = ratio * this.audio.duration;
+    const duration = this._getReliableDuration();
+    if (duration != null) {
+      this.audio.currentTime = ratio * duration;
       return;
     }
     this._pendingSeekRatio = ratio;
-    this._fixUnknownDuration();
+    this._pendingSeekSeconds = null;
   }
 
-  _fixUnknownDuration() {
-    if (this._fixingDuration) return;
-    this._fixingDuration = true;
-    const resumeAt = this.audio.currentTime;
-    const onDurationChange = () => {
-      if (!this._isValidDuration()) return;
-      this.audio.removeEventListener("durationchange", onDurationChange);
-      this._fixingDuration = false;
-      let target = resumeAt;
-      if (this._pendingSeekSeconds != null) target = this._pendingSeekSeconds;
-      else if (this._pendingSeekRatio != null) target = this._pendingSeekRatio * this.audio.duration;
+  _tryPendingSeek() {
+    const duration = this._getReliableDuration();
+    if (duration == null) return;
+    if (this._pendingSeekSeconds != null) {
+      this.audio.currentTime = Math.min(duration, Math.max(0, this._pendingSeekSeconds));
       this._pendingSeekSeconds = null;
+    } else if (this._pendingSeekRatio != null) {
+      this.audio.currentTime = this._pendingSeekRatio * duration;
       this._pendingSeekRatio = null;
-      this.audio.currentTime = Math.min(this.audio.duration, Math.max(0, target));
-    };
-    this.audio.addEventListener("durationchange", onDurationChange);
-    // ترفند رایج: پرش به یک زمان بسیار بزرگ، مرورگر را مجبور می‌کند کل فایل
-    // را اسکن کرده و مدت‌زمان واقعی را محاسبه کند (رویداد durationchange را فعال می‌کند).
-    this.audio.currentTime = 1e9;
+    }
   }
 
   _renderChapterList() {
@@ -273,14 +292,16 @@ class KetabBazAudioPlayer {
     this.els.fill.style.width = pct + "%";
     this.els.handle.style.right = pct + "%";
     this.els.bar.setAttribute("aria-valuenow", pct);
-    if (previewOnly && this.audio.duration) {
-      this.els.currentTime.textContent = this._formatTime(ratio * this.audio.duration);
+    if (previewOnly) {
+      const duration = this._getReliableDuration();
+      if (duration) this.els.currentTime.textContent = this._formatTime(ratio * duration);
     }
   }
 
   _updateBar() {
-    if (!this._isValidDuration()) return;
-    const ratio = this.audio.currentTime / this.audio.duration;
+    const duration = this._getReliableDuration();
+    if (!duration) return;
+    const ratio = this.audio.currentTime / duration;
     this._setBarRatio(ratio);
     this.els.currentTime.textContent = this._formatTime(this.audio.currentTime);
   }
@@ -296,7 +317,6 @@ class KetabBazAudioPlayer {
     this.els.currentTime.textContent = "۰:۰۰";
     this._pendingSeekRatio = null;
     this._pendingSeekSeconds = null;
-    this._fixingDuration = false;
     this._syncActiveChapter();
     if (autoplay) {
       this.audio.play().catch(() => {});
@@ -317,8 +337,9 @@ class KetabBazAudioPlayer {
   }
 
   seekBy(seconds) {
-    if (!this._isValidDuration()) return;
-    this.audio.currentTime = Math.min(this.audio.duration, Math.max(0, this.audio.currentTime + seconds));
+    const duration = this._getReliableDuration();
+    if (!duration) return;
+    this.audio.currentTime = Math.min(duration, Math.max(0, this.audio.currentTime + seconds));
   }
 
   cycleSpeed() {
