@@ -803,10 +803,210 @@ button {
   text-align: center;
 }
 
-/* ---------------- Install prompt ---------------- */
+body.has-bottom-nav {
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  z-index: 200;
+  display: flex;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -6px 20px rgba(23, 48, 31, 0.08);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bottom-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 9px 4px 8px;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+.bottom-nav__icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.bottom-nav__item.is-active {
+  color: var(--color-primary);
+}
+
+.bottom-nav__item.is-active .bottom-nav__icon {
+  transform: translateY(-1px);
+}
+
+/* روی دسکتاپ نوار پایین لازم نیست؛ ناوبری بالای صفحه کافی است */
+@media (min-width: 860px) {
+  .bottom-nav {
+    display: none;
+  }
+  body.has-bottom-nav {
+    padding-bottom: 0;
+  }
+}
+
+/* ---------------- Marginalia (حاشیه‌ها) ---------------- */
+.marginalia-list {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 50px;
+}
+
+.marginalia-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  border-inline-start: 4px solid var(--color-accent);
+}
+
+.marginalia-card__book {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.marginalia-card__text {
+  font-family: var(--font-quote);
+  font-size: 1.05rem;
+  color: var(--color-ink);
+  margin: 0 0 10px;
+}
+
+.marginalia-card__tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ---------------- Notable figures (مشاهیر) ---------------- */
+.figure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+  padding-bottom: 50px;
+}
+
+.figure-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease;
+  border-radius: var(--radius-md);
+}
+
+.figure-card:hover {
+  transform: translateY(-3px);
+}
+
+.figure-card__photo {
+  aspect-ratio: 1;
+  background: var(--color-bg-alt);
+  overflow: hidden;
+}
+
+.figure-card__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.figure-card__body {
+  padding: 12px 10px 16px;
+}
+
+.figure-card__name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0 0 4px;
+}
+
+.figure-card__category {
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+
+.figure-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.figure-filters button {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.figure-filters button.is-active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.figure-detail {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 36px;
+  padding: 34px 0 60px;
+  align-items: start;
+}
+
+.figure-detail__photo img {
+  width: 100%;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.figure-detail h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  margin: 0 0 6px;
+}
+
+.figure-detail__meta {
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+.figure-detail__bio {
+  font-size: 1.02rem;
+  margin-bottom: 26px;
+}
+
+.figure-detail__related h2 {
+  font-size: 1.15rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 14px;
+}
+
 .install-toast {
   position: fixed;
-  bottom: 18px;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   inset-inline: 0;
   margin: 0 auto;
   max-width: 360px;
@@ -822,6 +1022,12 @@ button {
   z-index: 100;
   transform: translateY(140%);
   transition: transform 0.3s ease;
+}
+
+@media (min-width: 860px) {
+  .install-toast {
+    bottom: 18px;
+  }
 }
 
 .install-toast.is-visible {
