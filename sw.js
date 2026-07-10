@@ -3,7 +3,7 @@
  * سرویس ورکر کتاب‌باز — کش کردن پوسته‌ی برنامه برای بارگذاری سریع‌تر و کارکرد آفلاین
  */
 
-const CACHE_NAME = "ketabbaz-cache-v1";
+const CACHE_NAME = "ketabbaz-cache-v3";
 
 const APP_SHELL = [
   "./index.html",
@@ -15,9 +15,16 @@ const APP_SHELL = [
   "./js/storage.js",
   "./js/seo.js",
   "./js/audio-player.js",
+  "./js/figures.js",
+  "./js/bottom-nav.js",
   "./data/books.json",
   "./data/categories.json",
   "./data/podcasts.json",
+  "./data/marginalia.json",
+  "./data/figures.json",
+  "./pages/podcasts.html",
+  "./pages/marginalia.html",
+  "./pages/figures.html",
 ];
 
 self.addEventListener("install", (event) => {
