@@ -119,7 +119,13 @@
     "rating": "top",
     "score": 4.9,
     "cover": "assets/covers/shahzade-koochoolo.jpg",
-    "audio": "assets/audio/shahzade/ch1.mp3",
+    "audio": [
+    { "title": "فصل اول", "src": "assets/audio/shahzade-koochoolo/ch1.mp3" },
+    { "title": "فصل دوم", "src": "assets/audio/shahzade-koochoolo/ch2.mp3" },
+    { "title": "فصل سوم", "src": "assets/audio/shahzade-koochoolo/ch3.mp3" },
+    { "title": "فصل چهارم", "src": "assets/audio/shahzade-koochoolo/ch4.mp3" },
+      { "title": "فصل پنجم", "src": "assets/audio/shahzade-koochoolo/ch5.mp3" }
+  ],
     "pdf": null,
     "summary": "سفر شاعرانه‌ی شاهزاده‌ای کوچک میان سیارات، درباره‌ی معنای دوستی، عشق و مسئولیت، به زبانی ساده برای همه‌ی سنین.",
     "highlights": [
