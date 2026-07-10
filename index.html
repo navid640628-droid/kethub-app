@@ -31,9 +31,9 @@
       </a>
       <nav class="main-nav" aria-label="ناوبری اصلی">
         <a href="./">خانه</a>
-        <a href="#podcasts">پادکست‌ها</a>
-        <a href="pages/category.html?rating=top">کتاب‌های برتر</a>
-        <a href="pages/category.html?genre=poetry">شعر و ادبیات</a>
+        <a href="pages/podcasts.html">پادکست‌ها</a>
+        <a href="pages/marginalia.html">حاشیه‌ها</a>
+        <a href="pages/figures.html">مشاهیر</a>
       </nav>
       <a class="btn-telegram" href="https://t.me/kmketab" target="_blank" rel="noopener">
         کانال تلگرام ↗
@@ -94,12 +94,23 @@
     </div>
 
     <section id="podcasts" aria-labelledby="podcasts-title">
-      <h2 class="section-title" id="podcasts-title">پادکست‌های کتاب‌باز</h2>
+      <div class="results-bar">
+        <h2 class="section-title" id="podcasts-title" style="margin:0;">پادکست‌های کتاب‌باز</h2>
+        <a href="pages/podcasts.html">مشاهده‌ی همه ›</a>
+      </div>
       <p class="section-sub">گفت‌وگوهایی صوتی درباره‌ی کتاب‌هایی که خوانده‌ایم.</p>
 
       <div id="podcast-player-mount"></div>
       <div id="podcast-list" class="podcast-list">
         <p class="empty-state">در حال بارگذاری پادکست‌ها…</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="explore-title" style="padding-bottom:50px;">
+      <h2 class="section-title" id="explore-title">بیشتر کشف کن</h2>
+      <div class="filters" style="margin-top:0;">
+        <a class="tag" style="padding:10px 18px;font-size:0.9rem;" href="pages/marginalia.html">🗒 حاشیه‌های کتاب</a>
+        <a class="tag" style="padding:10px 18px;font-size:0.9rem;" href="pages/figures.html">🎭 مشاهیر</a>
       </div>
     </section>
   </main>
@@ -137,6 +148,7 @@
   <script src="js/books.js"></script>
   <script src="js/audio-player.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/bottom-nav.js"></script>
   <script>
     // بارگذاری و رندر پادکست‌ها + راه‌اندازی پلیر مشترک
     (async function initPodcasts() {
