@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>حاشیه‌های کتاب | حقایق و نکات خواندنی درباره‌ی کتاب‌ها | کتاب‌باز</title>
+  <meta name="description" content="حقایق، نکات و حاشیه‌های خواندنی پشت‌صحنه‌ی کتاب‌های معروف؛ چیزهایی که شاید نمی‌دانستید.">
+  <meta name="theme-color" content="#1f4d3d">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" href="../assets/icons/icon-192.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="../" class="brand">
+        <span class="brand__mark">ک</span>
+        <span class="brand__text">کتاب‌باز</span>
+      </a>
+      <nav class="main-nav" aria-label="ناوبری اصلی">
+        <a href="../">خانه</a>
+        <a href="podcasts.html">پادکست‌ها</a>
+        <a href="marginalia.html">حاشیه‌ها</a>
+        <a href="figures.html">مشاهیر</a>
+      </nav>
+      <a class="btn-telegram" href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام ↗</a>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:34px;">
+    <p class="breadcrumb"><a href="../">خانه</a> › <span>حاشیه‌ها</span></p>
+    <h1 class="section-title">حاشیه‌های کتاب</h1>
+    <p class="section-sub">حقایق، نکات و پشت‌صحنه‌هایی خواندنی از دل کتاب‌هایی که معرفی کرده‌ایم.</p>
+
+    <div id="marginalia-list" class="marginalia-list">
+      <p class="empty-state">در حال بارگذاری…</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>
+        <div class="brand" style="margin-bottom:10px;">
+          <span class="brand__mark">ک</span>
+          <span>کتاب‌باز</span>
+        </div>
+        <p style="max-width:320px;color:#9fae9e;font-size:0.88rem;">کتاب‌باز جایی برای کشف، خواندن و شنیدن کتاب‌های خوب است.</p>
+      </div>
+      <div>
+        <p style="margin:0 0 10px;font-weight:700;">دسترسی سریع</p>
+        <p style="margin:0 0 8px;"><a href="../">خانه</a></p>
+        <p style="margin:0 0 8px;"><a href="figures.html">مشاهیر</a></p>
+        <p style="margin:0;"><a href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام</a></p>
+      </div>
+    </div>
+    <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
+  </footer>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/seo.js"></script>
+  <script src="../js/books.js"></script>
+  <script src="../js/bottom-nav.js"></script>
+  <script>
+    (async function initMarginaliaPage() {
+      KetabBazStorage.getUserId();
+
+      KetabBazSEO.applyPageMeta({
+        title: "حاشیه‌های کتاب | حقایق و نکات خواندنی | کتاب‌باز",
+        description: "حقایق، نکات و حاشیه‌های خواندنی پشت‌صحنه‌ی کتاب‌های معروف.",
+        url: window.location.href,
+      });
+
+      const list = document.getElementById("marginalia-list");
+      try {
+        const res = await fetch("../data/marginalia.json");
+        const items = await res.json();
+
+        if (!items.length) {
+          list.innerHTML = `<p class="empty-state">هنوز حاشیه‌ای ثبت نشده.</p>`;
+          return;
+        }
+
+        list.innerHTML = items
+          .map(
+            (item) => `
+          <article class="marginalia-card">
+            ${
+              item.bookId
+                ? `<a class="marginalia-card__book" href="book.html?id=${item.bookId}">📖 ${item.bookTitle}</a>`
+                : ""
+            }
+            <p class="marginalia-card__text">${item.text}</p>
+            <div class="marginalia-card__tags">
+              ${(item.tags || []).map((t) => `<span class="tag tag--muted">${t}</span>`).join("")}
+            </div>
+          </article>
+        `
+          )
+          .join("");
+      } catch (e) {
+        list.innerHTML = `<p class="empty-state">مشکلی در بارگذاری حاشیه‌ها پیش آمد.</p>`;
+      }
+    })();
+  </script>
+</body>
+</html>

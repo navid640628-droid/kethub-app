@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title id="doc-title">کتاب‌باز</title>
+  <meta name="description" id="doc-description" content="">
+  <meta name="theme-color" content="#1f4d3d">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" href="../assets/icons/icon-192.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="../" class="brand">
+        <span class="brand__mark">ک</span>
+        <span class="brand__text">کتاب‌باز</span>
+      </a>
+      <nav class="main-nav" aria-label="ناوبری اصلی">
+        <a href="../">خانه</a>
+        <a href="podcasts.html">پادکست‌ها</a>
+        <a href="marginalia.html">حاشیه‌ها</a>
+        <a href="figures.html">مشاهیر</a>
+      </nav>
+      <a class="btn-telegram" href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام ↗</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <p class="breadcrumb" id="breadcrumb">در حال بارگذاری…</p>
+    <div id="figure-content">
+      <p class="empty-state">در حال بارگذاری…</p>
+    </div>
+
+    <section class="related-section" id="related-section" hidden>
+      <h2>آثاری که در کتاب‌باز معرفی شده</h2>
+      <div id="related-grid" class="book-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>
+        <div class="brand" style="margin-bottom:10px;">
+          <span class="brand__mark">ک</span>
+          <span>کتاب‌باز</span>
+        </div>
+        <p style="max-width:320px;color:#9fae9e;font-size:0.88rem;">کتاب‌باز جایی برای کشف، خواندن و شنیدن کتاب‌های خوب است.</p>
+      </div>
+      <div>
+        <p style="margin:0 0 10px;font-weight:700;">دسترسی سریع</p>
+        <p style="margin:0 0 8px;"><a href="figures.html">مشاهیر</a></p>
+        <p style="margin:0 0 8px;"><a href="marginalia.html">حاشیه‌های کتاب</a></p>
+        <p style="margin:0;"><a href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام</a></p>
+      </div>
+    </div>
+    <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
+  </footer>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/seo.js"></script>
+  <script src="../js/books.js"></script>
+  <script src="../js/figures.js"></script>
+  <script src="../js/bottom-nav.js"></script>
+  <script>
+    (async function initFigurePage() {
+      KetabBazStorage.getUserId();
+
+      const params = new URLSearchParams(window.location.search);
+      const figureId = params.get("id");
+      const contentEl = document.getElementById("figure-content");
+      const breadcrumbEl = document.getElementById("breadcrumb");
+
+      if (!figureId) {
+        contentEl.innerHTML = `<p class="empty-state">شناسه‌ی مشخص نشده است.</p>`;
+        return;
+      }
+
+      let figures;
+      try {
+        figures = await KetabBazFigures.fetchFigures("../data/figures.json");
+      } catch (e) {
+        contentEl.innerHTML = `<p class="empty-state">مشکلی در بارگذاری اطلاعات پیش آمد.</p>`;
+        return;
+      }
+
+      const figure = KetabBazFigures.findById(figures, figureId);
+      if (!figure) {
+        contentEl.innerHTML = `<p class="empty-state">چهره‌ای با این شناسه پیدا نشد.</p>`;
+        return;
+      }
+
+      const pageUrl = window.location.href;
+
+      KetabBazSEO.applyPageMeta({
+        title: `${figure.name} - زندگی‌نامه | کتاب‌باز`,
+        description: figure.shortBio,
+        keywords: figure.tags,
+        image: `../${figure.photo}`,
+        url: pageUrl,
+      });
+
+      KetabBazSEO.injectJSONLD(
+        {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: figure.name,
+          description: figure.shortBio,
+          image: `../${figure.photo}`,
+          nationality: figure.nationality,
+          birthDate: figure.birthYear ? String(figure.birthYear) : undefined,
+          deathDate: figure.deathYear ? String(figure.deathYear) : undefined,
+          url: pageUrl,
+        },
+        "kb-person-schema"
+      );
+
+      breadcrumbEl.innerHTML = `
+        <a href="../">خانه</a> ›
+        <a href="figures.html">مشاهیر</a> ›
+        <span>${figure.name}</span>
+      `;
+
+      const yearsLabel =
+        figure.birthYear && figure.deathYear
+          ? `${figure.birthYear} - ${figure.deathYear} میلادی`
+          : figure.birthYear
+          ? `متولد ${figure.birthYear}`
+          : "";
+
+      contentEl.innerHTML = `
+        <article class="figure-detail">
+          <div class="figure-detail__photo">
+            <img src="../${figure.photo}" alt="${figure.name}" width="220" height="220">
+          </div>
+          <div class="figure-detail__info">
+            <h1>${figure.name}</h1>
+            <p class="figure-detail__meta">
+              ${KetabBazFigures.categoryLabel(figure.category)}
+              ${figure.nationality ? ` · ${figure.nationality}` : ""}
+              ${yearsLabel ? ` · ${yearsLabel}` : ""}
+            </p>
+            <p class="figure-detail__bio">${figure.biography}</p>
+            <div class="book-detail__tags">
+              ${(figure.tags || []).map((t) => `<span class="tag tag--muted">${t}</span>`).join("")}
+            </div>
+          </div>
+        </article>
+      `;
+
+      // کتاب‌های مرتبط با این چهره که در کتاب‌باز معرفی شده‌اند
+      if (figure.relatedBookIds && figure.relatedBookIds.length) {
+        try {
+          const books = await KetabBazBooks.fetchBooks("../data/books.json");
+          const related = figure.relatedBookIds
+            .map((id) => KetabBazBooks.findById(books, id))
+            .filter(Boolean);
+          if (related.length) {
+            document.getElementById("related-section").hidden = false;
+            KetabBazBooks.renderGrid(document.getElementById("related-grid"), related, {
+              pagesPrefix: "",
+              assetsPrefix: "../",
+            });
+          }
+        } catch (e) {
+          /* کتاب‌های مرتبط اختیاری هستند؛ در صورت خطا نادیده گرفته می‌شود */
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
