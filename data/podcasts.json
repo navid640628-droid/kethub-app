@@ -22,5 +22,31 @@
     "publishedAt": "2026-05-15",
     "telegram": "https://t.me/kmketab",
     "tags": ["پادکست", "کامو", "فلسفه"]
-  }
+  },
+  {
+  "id": "atomic-habits-manzareh",
+  "title": "عادت‌های اتمی - قسمت اول: منظره",
+  "host": "کتاب‌باز",
+  "cover": "assets/covers/podcast-atomic-1.svg",
+  "audio": "assets/audio/podcast/atomic-habits-manzareh.mp3",
+  "duration": 1500,
+  "description": "نگاهی کلی به ایده‌ی اصلی کتاب عادت‌های اتمی جیمز کلیر: چرا تغییرات کوچک و مستمر، در بلندمدت نتیجه‌ای بزرگ‌تر از تصمیم‌های بزرگ و ناگهانی می‌دهند.",
+  "publishedAt": "2026-07-15",
+  "telegram": "https://t.me/kmketab",
+  "bookId": "atomic-habits",
+  "tags": ["پادکست", "عادت‌های اتمی", "جیمز کلیر", "توسعه فردی"]
+},
+{
+  "id": "atomic-habits-vakavi",
+  "title": "عادت‌های اتمی - قسمت دوم: واکاوی",
+  "host": "کتاب‌باز",
+  "cover": "assets/covers/podcast-atomic-2.svg",
+  "audio": "assets/audio/podcast/atomic-habits-vakavi.mp3",
+  "duration": 1680,
+  "description": "واکاوی دقیق‌تر قانون چهارگانه‌ی ساخت عادت (نمایان، جذاب، آسان، رضایت‌بخش) و بررسی این‌که چطور هویت فرد در تغییر رفتار پایدار نقش دارد.",
+  "publishedAt": "2026-07-22",
+  "telegram": "https://t.me/kmketab",
+  "bookId": "atomic-habits",
+  "tags": ["پادکست", "عادت‌های اتمی", "جیمز کلیر", "واکاوی"]
+}
 ]
