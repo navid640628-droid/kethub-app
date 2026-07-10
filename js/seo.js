@@ -31,6 +31,17 @@ const KetabBazSEO = (() => {
     setOgMeta("og:title", title);
   }
 
+  function setCanonical(url) {
+    if (!url) return;
+    let el = document.querySelector('link[rel="canonical"]');
+    if (!el) {
+      el = document.createElement("link");
+      el.setAttribute("rel", "canonical");
+      document.head.appendChild(el);
+    }
+    el.setAttribute("href", url);
+  }
+
   function applyPageMeta({ title, description, keywords, image, url }) {
     if (title) setTitle(title);
     if (description) {
@@ -41,7 +52,10 @@ const KetabBazSEO = (() => {
       setMeta("keywords", keywords.join("، "));
     }
     if (image) setOgMeta("og:image", image);
-    if (url) setOgMeta("og:url", url);
+    if (url) {
+      setOgMeta("og:url", url);
+      setCanonical(url);
+    }
     setOgMeta("og:type", "book");
   }
 
