@@ -11,6 +11,13 @@
     max-width: 220px;
     margin: 0 auto;
   }
+  .figure-detail {
+    grid-template-columns: 1fr;
+  }
+  .figure-detail__photo {
+    max-width: 200px;
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 720px) {
@@ -76,6 +83,11 @@
 @media (max-width: 420px) {
   .book-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .figure-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
   }
 
   .brand span.brand__text {
