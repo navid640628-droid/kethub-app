@@ -21,9 +21,9 @@
       </a>
       <nav class="main-nav" aria-label="ناوبری اصلی">
         <a href="../">خانه</a>
-        <a href="../#podcasts">پادکست‌ها</a>
-        <a href="category.html?rating=top">کتاب‌های برتر</a>
-        <a href="category.html?genre=poetry">شعر و ادبیات</a>
+        <a href="podcasts.html">پادکست‌ها</a>
+        <a href="marginalia.html">حاشیه‌ها</a>
+        <a href="figures.html">مشاهیر</a>
       </nav>
       <a class="btn-telegram" href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام ↗</a>
     </div>
@@ -64,6 +64,7 @@
   <script src="../js/seo.js"></script>
   <script src="../js/books.js"></script>
   <script src="../js/audio-player.js"></script>
+  <script src="../js/bottom-nav.js"></script>
   <script>
     (async function initBookPage() {
       KetabBazStorage.getUserId();
@@ -141,6 +142,8 @@
               </ul>
             </div>
 
+            <div id="book-marginalia"></div>
+
             <div id="audio-mount"></div>
 
             <div class="detail-actions">
@@ -184,6 +187,26 @@
           pagesPrefix: "",
           assetsPrefix: "../",
         });
+      }
+
+      // حاشیه‌ها و حقایق خواندنی مربوط به همین کتاب (در صورت وجود)
+      try {
+        const marginaliaRes = await fetch("../data/marginalia.json");
+        const marginalia = await marginaliaRes.json();
+        const bookMarginalia = marginalia.filter((m) => m.bookId === book.id);
+        if (bookMarginalia.length) {
+          document.getElementById("book-marginalia").innerHTML = `
+            <div class="highlights" style="border-inline-start-color: var(--color-primary);">
+              <h2>حاشیه‌ها و نکات خواندنی</h2>
+              ${bookMarginalia
+                .map((m) => `<p style="font-family:var(--font-quote);font-size:1.02rem;margin-bottom:10px;">${m.text}</p>`)
+                .join("")}
+              <a href="marginalia.html" class="tag" style="display:inline-block;margin-top:6px;">مشاهده‌ی همه‌ی حاشیه‌ها ›</a>
+            </div>
+          `;
+        }
+      } catch (e) {
+        /* حاشیه‌ها اختیاری‌اند؛ در صورت خطا نادیده گرفته می‌شود */
       }
     })();
   </script>
