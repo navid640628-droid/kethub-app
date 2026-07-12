@@ -7,7 +7,11 @@
   <meta name="description" id="doc-description" content="">
   <meta name="theme-color" content="#1f4d3d">
   <link rel="manifest" href="../manifest.json">
+  <link rel="icon" href="../favicon.ico" sizes="any">
+  <link rel="icon" href="../assets/icons/icon-48.png" sizes="48x48" type="image/png">
+  <link rel="icon" href="../assets/icons/icon-192.png" sizes="192x192" type="image/png">
   <link rel="icon" href="../assets/icons/icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/responsive.css">
 </head>
@@ -24,6 +28,7 @@
         <a href="podcasts.html">پادکست‌ها</a>
         <a href="marginalia.html">حاشیه‌ها</a>
         <a href="figures.html">مشاهیر</a>
+        <a href="my-library.html">کتابخانه‌ی من</a>
       </nav>
       <a class="btn-telegram" href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام ↗</a>
     </div>
@@ -61,6 +66,7 @@
   </footer>
 
   <script src="../js/storage.js"></script>
+  <script src="../js/library.js"></script>
   <script src="../js/seo.js"></script>
   <script src="../js/books.js"></script>
   <script src="../js/audio-player.js"></script>
@@ -153,9 +159,41 @@
               ${book.pdf ? `<a class="btn btn--accent" href="../${book.pdf}" target="_blank" rel="noopener">دانلود PDF</a>` : ""}
               <a class="btn btn--outline" href="${book.telegram}" target="_blank" rel="noopener">مشاهده در تلگرام</a>
             </div>
+
+            <div id="library-widget" class="highlights" style="border-inline-start-color: var(--color-accent);"></div>
           </div>
         </article>
       `;
+
+      renderLibraryWidget();
+      function renderLibraryWidget() {
+        const widget = document.getElementById("library-widget");
+        const inLibrary = KetabBazLibrary.findByBookId(book.id);
+        const STATUS_LABEL = { want: "می‌خوام بخونم", reading: "در حال خواندن", read: "خوانده‌ام", dropped: "رها شده" };
+        if (inLibrary) {
+          widget.innerHTML = `
+            <h2>کتابخانه‌ی شخصی من</h2>
+            <p>این کتاب توی لیست «${STATUS_LABEL[inLibrary.status]}» توئه.</p>
+            <a class="btn btn--outline" href="my-library.html">مدیریت در کتابخانه‌ی من ›</a>
+          `;
+        } else {
+          widget.innerHTML = `
+            <h2>کتابخانه‌ی شخصی من</h2>
+            <p style="margin-bottom:12px;">این کتاب رو به کتابخانه‌ی شخصی‌ات اضافه کن (بدون نیاز به ثبت‌نام):</p>
+            <div class="detail-actions" style="margin-bottom:0;">
+              <button class="btn btn--outline" data-add-status="want">می‌خوام بخونم</button>
+              <button class="btn btn--outline" data-add-status="reading">در حال خواندنشم</button>
+              <button class="btn btn--outline" data-add-status="read">قبلاً خوندمش</button>
+            </div>
+          `;
+          widget.querySelectorAll("[data-add-status]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              KetabBazLibrary.addFromCatalog(book, btn.getAttribute("data-add-status"));
+              renderLibraryWidget();
+            });
+          });
+        }
+      }
 
       document.getElementById("fav-toggle").addEventListener("click", (e) => {
         const active = KetabBazStorage.toggleFavorite(book.id);
