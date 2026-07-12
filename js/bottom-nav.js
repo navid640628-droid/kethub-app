@@ -15,6 +15,7 @@
     { key: "podcasts", label: "پادکست", icon: "🎧", href: `${pages}podcasts.html` },
     { key: "marginalia", label: "حاشیه‌ها", icon: "🗒", href: `${pages}marginalia.html` },
     { key: "figures", label: "مشاهیر", icon: "🎭", href: `${pages}figures.html` },
+    { key: "library", label: "کتابخانه", icon: "🗂", href: `${pages}my-library.html` },
   ];
 
   const path = window.location.pathname;
@@ -31,6 +32,7 @@
     if (item.key === "podcasts") return path.includes("podcasts.html");
     if (item.key === "marginalia") return path.includes("marginalia.html");
     if (item.key === "figures") return path.includes("figures.html") || path.includes("figure.html");
+    if (item.key === "library") return path.includes("my-library.html");
     return false;
   }
 
