@@ -1004,6 +1004,270 @@ body.has-bottom-nav {
   margin-bottom: 14px;
 }
 
+/* ---------------- کتابخانه‌ی شخصی (My Library) ---------------- */
+.library-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.library-stat {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 8px;
+  text-align: center;
+}
+
+.library-stat__num {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  display: block;
+}
+
+.library-stat__label {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.library-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.library-tabs button {
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.library-tabs button.is-active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.library-list {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 40px;
+}
+
+.library-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 14px;
+}
+
+.library-card__cover {
+  width: 64px;
+  height: 92px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-alt);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.library-card__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.library-card__title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 0 2px;
+}
+
+.library-card__author {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin: 0 0 10px;
+}
+
+.library-progress {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(31, 77, 61, 0.12);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.library-progress__fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.library-progress__label {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-bottom: 10px;
+}
+
+.pace-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-inline-start: 6px;
+}
+
+.pace-badge--ahead {
+  background: rgba(31, 77, 61, 0.15);
+  color: var(--color-primary);
+}
+
+.pace-badge--behind {
+  background: rgba(161, 55, 47, 0.12);
+  color: var(--color-danger);
+}
+
+.pace-badge--on_track {
+  background: rgba(184, 132, 42, 0.15);
+  color: var(--color-accent);
+}
+
+.library-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.library-card__actions button,
+.library-card__actions a {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+}
+
+.library-card__actions button.primary {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.log-today {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.log-today input[type="number"] {
+  width: 70px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-family: inherit;
+}
+
+.log-today button {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.plan-form {
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.plan-form label {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.plan-form input {
+  width: 90px;
+  padding: 6px 9px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-family: inherit;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.rating-stars .star {
+  color: var(--color-border);
+}
+
+.rating-stars .star.is-filled {
+  color: var(--color-accent);
+}
+
+.library-card textarea {
+  width: 100%;
+  min-height: 60px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  resize: vertical;
+}
+
+.add-custom-book {
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 24px;
+  display: none;
+  gap: 10px;
+  grid-template-columns: 1fr;
+}
+
+.add-custom-book.is-open {
+  display: grid;
+}
+
+.add-custom-book input {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-family: inherit;
+}
+
 .install-toast {
   position: fixed;
   bottom: calc(76px + env(safe-area-inset-bottom, 0px));
