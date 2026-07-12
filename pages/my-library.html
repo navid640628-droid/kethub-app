@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>کتابخانه‌ی من | پیگیری مطالعه | کتاب‌باز</title>
+  <meta name="description" content="کتاب‌های خوانده‌شده، در حال مطالعه، برنامه‌ی آینده و رهاشده‌ی خودت را در کتاب‌باز پیگیری کن.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1f4d3d">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="icon" href="../favicon.ico" sizes="any">
+  <link rel="icon" href="../assets/icons/icon-48.png" sizes="48x48" type="image/png">
+  <link rel="icon" href="../assets/icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="../assets/icons/icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="../" class="brand">
+        <span class="brand__mark">ک</span>
+        <span class="brand__text">کتاب‌باز</span>
+      </a>
+      <nav class="main-nav" aria-label="ناوبری اصلی">
+        <a href="../">خانه</a>
+        <a href="podcasts.html">پادکست‌ها</a>
+        <a href="marginalia.html">حاشیه‌ها</a>
+        <a href="figures.html">مشاهیر</a>
+        <a href="my-library.html">کتابخانه‌ی من</a>
+      </nav>
+      <a class="btn-telegram" href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام ↗</a>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:34px;">
+    <p class="breadcrumb"><a href="../">خانه</a> › <span>کتابخانه‌ی من</span></p>
+    <h1 class="section-title">کتابخانه‌ی من</h1>
+    <p class="section-sub">
+      این فضا کاملاً شخصیه و فقط روی همین مرورگر ذخیره می‌شه — نیازی به ثبت‌نام نیست، ولی یادت باشه اگه کش مرورگر رو پاک کنی یا از گوشی دیگه‌ای بیای، این لیست از اول شروع می‌شه.
+    </p>
+
+    <div class="library-stats" id="library-stats"></div>
+
+    <button type="button" class="btn btn--outline" id="toggle-add-book" style="margin-bottom:14px;">+ افزودن کتاب دلخواه</button>
+
+    <div class="add-custom-book" id="add-custom-book">
+      <input type="text" id="custom-title" placeholder="عنوان کتاب" required>
+      <input type="text" id="custom-author" placeholder="نویسنده (اختیاری)">
+      <input type="number" id="custom-pages" placeholder="تعداد کل صفحات (اختیاری)" min="1">
+      <button type="button" class="btn btn--primary" id="submit-custom-book" style="justify-self:start;">افزودن به «می‌خوام بخونم»</button>
+    </div>
+
+    <div class="library-tabs" id="library-tabs" role="group" aria-label="فیلتر وضعیت کتابخانه">
+      <button type="button" data-status="reading" class="is-active">در حال خواندن</button>
+      <button type="button" data-status="want">می‌خوام بخونم</button>
+      <button type="button" data-status="read">خوانده‌ام</button>
+      <button type="button" data-status="dropped">رها شده</button>
+    </div>
+
+    <div id="library-list" class="library-list"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>
+        <div class="brand" style="margin-bottom:10px;">
+          <span class="brand__mark">ک</span>
+          <span>کتاب‌باز</span>
+        </div>
+        <p style="max-width:320px;color:#9fae9e;font-size:0.88rem;">کتاب‌باز جایی برای کشف، خواندن و شنیدن کتاب‌های خوب است.</p>
+      </div>
+      <div>
+        <p style="margin:0 0 10px;font-weight:700;">دسترسی سریع</p>
+        <p style="margin:0 0 8px;"><a href="../">خانه</a></p>
+        <p style="margin:0 0 8px;"><a href="figures.html">مشاهیر</a></p>
+        <p style="margin:0;"><a href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام</a></p>
+      </div>
+    </div>
+    <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
+  </footer>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/library.js"></script>
+  <script src="../js/seo.js"></script>
+  <script src="../js/bottom-nav.js"></script>
+  <script>
+    (function initLibraryPage() {
+      KetabBazStorage.getUserId();
+
+      const statsEl = document.getElementById("library-stats");
+      const listEl = document.getElementById("library-list");
+      const tabButtons = document.querySelectorAll("#library-tabs button");
+      let activeStatus = "reading";
+      const openPlanIds = new Set(); // فقط وضعیت نمایشی (باز/بسته بودن فرم برنامه)، نه داده‌ی واقعی
+
+      const STATUS_LABEL = { want: "می‌خوام بخونم", reading: "در حال خواندن", read: "خوانده‌ام", dropped: "رها شده" };
+      const PACE_LABEL = { ahead: "جلوتر از برنامه", behind: "عقب‌تر از برنامه", on_track: "طبق برنامه" };
+
+      function renderStats() {
+        const s = KetabBazLibrary.getStats();
+        statsEl.innerHTML = `
+          <div class="library-stat"><span class="library-stat__num">${s.readCount}</span><span class="library-stat__label">خوانده‌ام</span></div>
+          <div class="library-stat"><span class="library-stat__num">${s.readingCount}</span><span class="library-stat__label">در حال خواندن</span></div>
+          <div class="library-stat"><span class="library-stat__num">${s.wantCount}</span><span class="library-stat__label">می‌خوام بخونم</span></div>
+          <div class="library-stat"><span class="library-stat__num">${s.totalPagesRead}</span><span class="library-stat__label">صفحه خوانده‌شده</span></div>
+        `;
+      }
+
+      function coverOrIcon(entry) {
+        if (entry.cover) return `<img src="../${entry.cover}" alt="">`;
+        return "📖";
+      }
+
+      function renderWantCard(entry) {
+        return `
+          <article class="library-card">
+            <div class="library-card__cover">${coverOrIcon(entry)}</div>
+            <div>
+              <h3 class="library-card__title">${entry.title}</h3>
+              <p class="library-card__author">${entry.author || ""}</p>
+              <div class="library-card__actions">
+                <button class="primary" data-action="start" data-id="${entry.id}">شروع مطالعه</button>
+                <button data-action="remove" data-id="${entry.id}">حذف</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderReadingCard(entry) {
+        const progress = KetabBazLibrary.getProgress(entry.id);
+        const hasPages = !!entry.totalPages;
+
+        let progressHtml = "";
+        if (hasPages) {
+          const pct = progress.percent || 0;
+          const paceBadge = progress.paceStatus
+            ? `<span class="pace-badge pace-badge--${progress.paceStatus}">${PACE_LABEL[progress.paceStatus]}</span>`
+            : "";
+          progressHtml = `
+            <div class="library-progress"><div class="library-progress__fill" style="width:${pct}%;"></div></div>
+            <p class="library-progress__label">${progress.pagesReadTotal} از ${entry.totalPages} صفحه (${pct}%)${paceBadge}</p>
+            ${
+              progress.projectedFinishDate
+                ? `<p class="library-progress__label">با این روند، تخمین پایان: ${progress.projectedFinishDate} (${progress.pagesPerDayTarget} صفحه در روز)</p>`
+                : ""
+            }
+          `;
+        } else {
+          progressHtml = `<p class="library-progress__label">برای دیدن پیشرفت و برنامه‌ریزی، تعداد کل صفحات کتاب رو وارد کن.</p>`;
+        }
+
+        const planOpen = openPlanIds.has(entry.id);
+        const planFormHtml = planOpen
+          ? `
+          <div class="plan-form">
+            ${
+              !hasPages
+                ? `<label>تعداد کل صفحات <input type="number" min="1" data-plan-field="totalPages" value="${entry.totalPages || ""}"></label>`
+                : ""
+            }
+            <label>ساعت آزاد در روز <input type="number" min="0.5" step="0.5" data-plan-field="hoursPerDay" value="${(entry.plan && entry.plan.hoursPerDay) || 2}"></label>
+            <label>سرعت مطالعه (صفحه در ساعت) <input type="number" min="1" data-plan-field="pagesPerHour" value="${(entry.plan && entry.plan.pagesPerHour) || 20}"></label>
+            <button class="btn btn--primary" data-action="save-plan" data-id="${entry.id}" style="justify-self:start;">ذخیره‌ی برنامه</button>
+          </div>
+        `
+          : "";
+
+        return `
+          <article class="library-card">
+            <div class="library-card__cover">${coverOrIcon(entry)}</div>
+            <div>
+              <h3 class="library-card__title">${entry.title}</h3>
+              <p class="library-card__author">${entry.author || ""}</p>
+              ${progressHtml}
+              <div class="log-today">
+                <input type="number" min="0" placeholder="صفحات امروز" data-log-field="${entry.id}">
+                <button data-action="log" data-id="${entry.id}">ثبت</button>
+                <button data-action="toggle-plan" data-id="${entry.id}" style="border:1px solid var(--color-border);border-radius:999px;background:var(--color-surface);color:var(--color-text-muted);padding:7px 14px;font-size:0.78rem;">
+                  ${entry.plan ? "ویرایش برنامه" : "تنظیم برنامه"}
+                </button>
+              </div>
+              ${planFormHtml}
+              <div class="library-card__actions">
+                <button class="primary" data-action="finish" data-id="${entry.id}">تمومش کردم</button>
+                <button data-action="drop" data-id="${entry.id}">رهاش کردم</button>
+                <button data-action="remove" data-id="${entry.id}">حذف</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderReadCard(entry) {
+        const rating = entry.rating || 0;
+        const stars = [1, 2, 3, 4, 5]
+          .map((n) => `<span class="star ${n <= rating ? "is-filled" : ""}" data-action="rate" data-id="${entry.id}" data-value="${n}">★</span>`)
+          .join("");
+        return `
+          <article class="library-card">
+            <div class="library-card__cover">${coverOrIcon(entry)}</div>
+            <div>
+              <h3 class="library-card__title">${entry.title}</h3>
+              <p class="library-card__author">${entry.author || ""}${entry.endDate ? ` · پایان: ${entry.endDate}` : ""}</p>
+              <div class="rating-stars">${stars}</div>
+              <textarea placeholder="یادداشت شخصی درباره‌ی این کتاب..." data-note-field="${entry.id}">${entry.note || ""}</textarea>
+              <div class="library-card__actions">
+                <button data-action="save-note" data-id="${entry.id}">ذخیره‌ی یادداشت</button>
+                <button data-action="remove" data-id="${entry.id}">حذف</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderDroppedCard(entry) {
+        const progress = KetabBazLibrary.getProgress(entry.id);
+        return `
+          <article class="library-card">
+            <div class="library-card__cover">${coverOrIcon(entry)}</div>
+            <div>
+              <h3 class="library-card__title">${entry.title}</h3>
+              <p class="library-card__author">${entry.author || ""}</p>
+              ${
+                entry.totalPages
+                  ? `<p class="library-progress__label">تا اینجا: ${progress.pagesReadTotal} از ${entry.totalPages} صفحه (${progress.percent}%)</p>`
+                  : ""
+              }
+              <div class="library-card__actions">
+                <button class="primary" data-action="resume" data-id="${entry.id}">ادامه بده</button>
+                <button data-action="remove" data-id="${entry.id}">حذف</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      const RENDERERS = {
+        want: renderWantCard,
+        reading: renderReadingCard,
+        read: renderReadCard,
+        dropped: renderDroppedCard,
+      };
+
+      const EMPTY_MESSAGES = {
+        want: "هنوز کتابی به لیست «می‌خوام بخونم» اضافه نکردی.",
+        reading: "الان کتابی در حال خواندن نداری. از صفحه‌ی هر کتاب یا با «افزودن کتاب دلخواه» شروع کن.",
+        read: "هنوز کتابی رو به‌عنوان خوانده‌شده ثبت نکردی.",
+        dropped: "کتاب رهاشده‌ای نداری — همینطور ادامه بده!",
+      };
+
+      function render() {
+        renderStats();
+        const entries = KetabBazLibrary.getByStatus(activeStatus);
+        if (!entries.length) {
+          listEl.innerHTML = `<p class="empty-state">${EMPTY_MESSAGES[activeStatus]}</p>`;
+          return;
+        }
+        listEl.innerHTML = entries.map((e) => RENDERERS[activeStatus](e)).join("");
+      }
+
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tabButtons.forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+          activeStatus = btn.getAttribute("data-status");
+          render();
+        });
+      });
+
+      // افزودن کتاب دلخواه
+      const addBookBox = document.getElementById("add-custom-book");
+      document.getElementById("toggle-add-book").addEventListener("click", () => {
+        addBookBox.classList.toggle("is-open");
+      });
+      document.getElementById("submit-custom-book").addEventListener("click", () => {
+        const title = document.getElementById("custom-title").value.trim();
+        if (!title) {
+          document.getElementById("custom-title").focus();
+          return;
+        }
+        const author = document.getElementById("custom-author").value.trim();
+        const pages = document.getElementById("custom-pages").value;
+        KetabBazLibrary.addCustom({ title, author, totalPages: pages ? Number(pages) : null }, "want");
+        document.getElementById("custom-title").value = "";
+        document.getElementById("custom-author").value = "";
+        document.getElementById("custom-pages").value = "";
+        addBookBox.classList.remove("is-open");
+        tabButtons.forEach((b) => b.classList.remove("is-active"));
+        document.querySelector('[data-status="want"]').classList.add("is-active");
+        activeStatus = "want";
+        render();
+      });
+
+      // اکشن‌های کارت‌ها (delegate روی کل لیست)
+      listEl.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-action]");
+        if (!btn) return;
+        const action = btn.getAttribute("data-action");
+        const id = btn.getAttribute("data-id");
+
+        if (action === "start") KetabBazLibrary.setStatus(id, "reading");
+        else if (action === "finish") KetabBazLibrary.setStatus(id, "read");
+        else if (action === "drop") KetabBazLibrary.setStatus(id, "dropped");
+        else if (action === "resume") KetabBazLibrary.setStatus(id, "reading");
+        else if (action === "remove") {
+          if (confirm("این کتاب از کتابخانه‌ی شخصی‌ات حذف بشه؟")) KetabBazLibrary.remove(id);
+        } else if (action === "rate") {
+          const value = Number(btn.getAttribute("data-value"));
+          KetabBazLibrary.setRatingNote(id, { rating: value, note: KetabBazLibrary.get(id).note });
+        } else if (action === "save-note") {
+          const textarea = listEl.querySelector(`[data-note-field="${id}"]`);
+          KetabBazLibrary.setRatingNote(id, { rating: KetabBazLibrary.get(id).rating, note: textarea.value });
+        } else if (action === "log") {
+          const input = listEl.querySelector(`[data-log-field="${id}"]`);
+          const pages = input.value;
+          if (pages === "") return;
+          KetabBazLibrary.logToday(id, pages);
+        } else if (action === "toggle-plan") {
+          if (openPlanIds.has(id)) openPlanIds.delete(id);
+          else openPlanIds.add(id);
+        } else if (action === "save-plan") {
+          const card = btn.closest(".library-card");
+          const totalPagesInput = card.querySelector('[data-plan-field="totalPages"]');
+          const hoursInput = card.querySelector('[data-plan-field="hoursPerDay"]');
+          const paceInput = card.querySelector('[data-plan-field="pagesPerHour"]');
+          KetabBazLibrary.setPlan(id, {
+            totalPages: totalPagesInput ? totalPagesInput.value : undefined,
+            hoursPerDay: hoursInput.value,
+            pagesPerHour: paceInput.value,
+          });
+          openPlanIds.delete(id);
+        }
+
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
