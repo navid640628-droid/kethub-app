@@ -65,6 +65,7 @@
     <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
   </footer>
 
+  <script src="https://unpkg.com/lucide@0.552.0/dist/umd/lucide.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/library.js"></script>
   <script src="../js/seo.js"></script>
@@ -133,7 +134,7 @@
           </div>
           <div class="book-detail__info">
             <h1>${book.title}</h1>
-            <p class="book-detail__author">نوشته‌ی ${book.author} · <span class="score">★ ${book.score}</span></p>
+            <p class="book-detail__author">نوشته‌ی ${book.author} · <span class="score"><i data-lucide="star" style="width:14px;height:14px;vertical-align:-2px;fill:currentColor;"></i> ${book.score}</span></p>
             <div class="book-detail__tags">
               <span class="tag">${KetabBazBooks.genreLabel(book.genre)}</span>
               <span class="tag tag--muted">${KetabBazBooks.typeLabel(book.type)}</span>
@@ -153,8 +154,9 @@
             <div id="audio-mount"></div>
 
             <div class="detail-actions">
-              <button class="btn ${isFav ? "btn--primary" : "btn--outline"}" id="fav-toggle">
-                ${isFav ? "♥ در علاقه‌مندی‌ها" : "♡ افزودن به علاقه‌مندی‌ها"}
+              <button class="btn ${isFav ? "btn--primary" : "btn--outline"}" id="fav-toggle" style="display:inline-flex;align-items:center;gap:6px;">
+                <i data-lucide="heart" class="fav-icon" style="${isFav ? "fill:currentColor;" : ""}"></i>
+                <span id="fav-toggle-label">${isFav ? "در علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}</span>
               </button>
               ${book.pdf ? `<a class="btn btn--accent" href="../${book.pdf}" target="_blank" rel="noopener">دانلود PDF</a>` : ""}
               <a class="btn btn--outline" href="${book.telegram}" target="_blank" rel="noopener">مشاهده در تلگرام</a>
@@ -164,6 +166,8 @@
           </div>
         </article>
       `;
+
+      if (window.lucide) window.lucide.createIcons();
 
       renderLibraryWidget();
       function renderLibraryWidget() {
@@ -197,8 +201,10 @@
 
       document.getElementById("fav-toggle").addEventListener("click", (e) => {
         const active = KetabBazStorage.toggleFavorite(book.id);
-        e.target.className = `btn ${active ? "btn--primary" : "btn--outline"}`;
-        e.target.textContent = active ? "♥ در علاقه‌مندی‌ها" : "♡ افزودن به علاقه‌مندی‌ها";
+        const toggleBtn = document.getElementById("fav-toggle");
+        toggleBtn.className = `btn ${active ? "btn--primary" : "btn--outline"}`;
+        document.getElementById("fav-toggle-label").textContent = active ? "در علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها";
+        toggleBtn.querySelector(".fav-icon").style.fill = active ? "currentColor" : "";
       });
 
       if (book.audio) {
