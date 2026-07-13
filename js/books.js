@@ -88,9 +88,9 @@ const KetabBazBooks = (() => {
             <span class="tag tag--muted">${typeLabel(book.type)}</span>
           </div>
           <div class="book-card__footer">
-            <span class="score" aria-label="امتیاز ${book.score} از ۵">★ ${book.score}</span>
+            <span class="score" aria-label="امتیاز ${book.score} از ۵"><i data-lucide="star" style="width:14px;height:14px;vertical-align:-2px;fill:currentColor;"></i> ${book.score}</span>
             <button class="fav-btn ${isFav ? "is-active" : ""}" data-fav-id="${book.id}" aria-pressed="${isFav}" title="افزودن به علاقه‌مندی‌ها">
-              ${isFav ? "♥" : "♡"}
+              <i data-lucide="heart" class="fav-icon"></i>
             </button>
           </div>
         </div>
@@ -105,6 +105,7 @@ const KetabBazBooks = (() => {
     }
     container.innerHTML = books.map((b) => cardTemplate(b, paths)).join("");
     bindFavButtons(container);
+    if (window.lucide) window.lucide.createIcons();
   }
 
   function bindFavButtons(container) {
@@ -115,7 +116,6 @@ const KetabBazBooks = (() => {
         const active = KetabBazStorage.toggleFavorite(id);
         btn.classList.toggle("is-active", active);
         btn.setAttribute("aria-pressed", String(active));
-        btn.textContent = active ? "♥" : "♡";
       });
     });
   }
