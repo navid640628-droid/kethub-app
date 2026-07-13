@@ -51,16 +51,16 @@ class KetabBazAudioPlayer {
         </div>
 
         <div class="kb-player__controls">
-          <button class="kb-btn" data-action="prev" title="فایل قبلی" aria-label="فایل قبلی">⏪</button>
-          <button class="kb-btn" data-action="back10" title="۱۰ ثانیه عقب" aria-label="۱۰ ثانیه عقب">⏮</button>
-          <button class="kb-btn kb-btn--play" data-action="toggle" title="پخش" aria-label="پخش">▶</button>
-          <button class="kb-btn" data-action="fwd10" title="۱۰ ثانیه جلو" aria-label="۱۰ ثانیه جلو">⏭</button>
-          <button class="kb-btn" data-action="next" title="فایل بعدی" aria-label="فایل بعدی">⏩</button>
+          <button class="kb-btn" data-action="prev" title="فایل قبلی" aria-label="فایل قبلی"><i data-lucide="skip-back"></i></button>
+          <button class="kb-btn" data-action="back10" title="۱۰ ثانیه عقب" aria-label="۱۰ ثانیه عقب"><i data-lucide="rotate-ccw"></i></button>
+          <button class="kb-btn kb-btn--play" data-action="toggle" title="پخش" aria-label="پخش"><i data-lucide="play" data-el="play-icon"></i></button>
+          <button class="kb-btn" data-action="fwd10" title="۱۰ ثانیه جلو" aria-label="۱۰ ثانیه جلو"><i data-lucide="rotate-cw"></i></button>
+          <button class="kb-btn" data-action="next" title="فایل بعدی" aria-label="فایل بعدی"><i data-lucide="skip-forward"></i></button>
         </div>
 
         <div class="kb-player__extra">
           <div class="kb-player__volume">
-            <span aria-hidden="true">🔊</span>
+            <i data-lucide="volume-2" aria-hidden="true"></i>
             <input type="range" min="0" max="1" step="0.01" value="1" data-el="volume" aria-label="حجم صدا">
           </div>
           <button class="kb-speed" data-action="speed" title="سرعت پخش">۱x</button>
@@ -79,6 +79,7 @@ class KetabBazAudioPlayer {
       volume: this.mountEl.querySelector('[data-el="volume"]'),
       speedBtn: this.mountEl.querySelector('[data-action="speed"]'),
     };
+    if (window.lucide) window.lucide.createIcons({ root: this.mountEl });
   }
 
   _formatTime(sec) {
@@ -128,11 +129,11 @@ class KetabBazAudioPlayer {
     });
 
     this.audio.addEventListener("play", () => {
-      this.els.playBtn.textContent = "⏸";
+      this._setPlayIcon("pause");
       this.els.playBtn.setAttribute("aria-label", "توقف");
     });
     this.audio.addEventListener("pause", () => {
-      this.els.playBtn.textContent = "▶";
+      this._setPlayIcon("play");
       this.els.playBtn.setAttribute("aria-label", "پخش");
       KetabBazStorage.setPlaybackPosition(this._trackKey(), this.audio.currentTime);
     });
@@ -192,6 +193,11 @@ class KetabBazAudioPlayer {
 
   _trackKey() {
     return this.currentTrack ? `track:${this.currentTrack.id}` : "track:unknown";
+  }
+
+  _setPlayIcon(name) {
+    this.els.playBtn.innerHTML = `<i data-lucide="${name}" data-el="play-icon"></i>`;
+    if (window.lucide) window.lucide.createIcons({ root: this.els.playBtn });
   }
 
   /**
@@ -258,7 +264,7 @@ class KetabBazAudioPlayer {
           <button type="button" class="kb-chapter-item" data-chapter-index="${i}" role="option" aria-selected="false">
             <span class="kb-chapter-item__index">${i + 1}</span>
             <span class="kb-chapter-item__title">${t.title}</span>
-            <span class="kb-chapter-item__playing" data-el="playing-badge">▶ در حال پخش</span>
+            <span class="kb-chapter-item__playing" data-el="playing-badge"><i data-lucide="play" style="width:12px;height:12px;"></i> در حال پخش</span>
           </button>
         `
           )
@@ -274,6 +280,7 @@ class KetabBazAudioPlayer {
       });
     });
     this._syncActiveChapter();
+    if (window.lucide) window.lucide.createIcons({ root: this.mountEl });
   }
 
   _syncActiveChapter() {
@@ -283,7 +290,7 @@ class KetabBazAudioPlayer {
       btn.classList.toggle("is-active", isActive);
       btn.setAttribute("aria-selected", String(isActive));
       const badge = btn.querySelector('[data-el="playing-badge"]');
-      if (badge) badge.style.display = isActive ? "inline" : "none";
+      if (badge) badge.style.display = isActive ? "inline-flex" : "none";
     });
   }
 
