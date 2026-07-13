@@ -55,7 +55,7 @@
 
   <div class="container search-bar">
     <div class="search-bar__box">
-      <span class="search-bar__icon" aria-hidden="true">🔎</span>
+      <i class="search-bar__icon" data-lucide="search" aria-hidden="true"></i>
       <input type="search" id="search-input" placeholder="جست‌وجوی عنوان، نویسنده یا موضوع…" aria-label="جست‌وجوی کتاب">
     </div>
   </div>
@@ -113,8 +113,8 @@
     <section aria-labelledby="explore-title" style="padding-bottom:50px;">
       <h2 class="section-title" id="explore-title">بیشتر کشف کن</h2>
       <div class="filters" style="margin-top:0;">
-        <a class="tag" style="padding:10px 18px;font-size:0.9rem;" href="pages/marginalia.html">🗒 حاشیه‌های کتاب</a>
-        <a class="tag" style="padding:10px 18px;font-size:0.9rem;" href="pages/figures.html">🎭 مشاهیر</a>
+        <a class="tag" style="padding:10px 18px;font-size:0.9rem;display:inline-flex;align-items:center;gap:6px;" href="pages/marginalia.html"><i data-lucide="sticky-note" style="width:16px;height:16px;"></i> حاشیه‌های کتاب</a>
+        <a class="tag" style="padding:10px 18px;font-size:0.9rem;display:inline-flex;align-items:center;gap:6px;" href="pages/figures.html"><i data-lucide="users" style="width:16px;height:16px;"></i> مشاهیر</a>
       </div>
     </section>
   </main>
@@ -147,6 +147,7 @@
     <button id="install-btn">نصب</button>
   </div>
 
+  <script src="https://unpkg.com/lucide@0.552.0/dist/umd/lucide.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/seo.js"></script>
   <script src="js/books.js"></script>
