@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title id="doc-title">کتاب‌باز</title>
-  <meta name="description" id="doc-description" content="">
+  <title id="doc-title">دسته‌بندی کتاب‌ها | کتاب‌باز</title>
+  <meta name="description" id="doc-description" content="مرور کتاب‌ها بر اساس ژانر، نوع محتوا، زبان و امتیاز در کتاب‌باز.">
   <meta name="theme-color" content="#1f4d3d">
   <link rel="manifest" href="../manifest.json">
   <link rel="icon" href="../favicon.ico" sizes="any">
@@ -34,16 +34,46 @@
     </div>
   </header>
 
-  <main class="container">
-    <p class="breadcrumb" id="breadcrumb">در حال بارگذاری…</p>
-    <div id="figure-content">
-      <p class="empty-state">در حال بارگذاری…</p>
+  <main class="container" style="padding-top:34px;">
+    <p class="breadcrumb"><a href="../">خانه</a> › <span id="category-crumb">دسته‌بندی</span></p>
+    <h1 class="section-title" id="category-title">فهرست کتاب‌ها</h1>
+    <p class="section-sub" id="category-sub">کتاب‌ها را بر اساس علاقه‌ات فیلتر کن.</p>
+
+    <div class="filters" role="group" aria-label="فیلتر کتاب‌ها">
+      <select id="filter-genre" aria-label="ژانر">
+        <option value="all">همه‌ی ژانرها</option>
+        <option value="novel">رمان و داستان</option>
+        <option value="science">علمی و آموزشی</option>
+        <option value="self-growth">توسعه فردی</option>
+        <option value="history-philosophy">تاریخ و فلسفه</option>
+        <option value="poetry">شعر و ادبیات</option>
+      </select>
+      <select id="filter-type" aria-label="نوع محتوا">
+        <option value="all">همه‌ی محتواها</option>
+        <option value="review">نقد و بررسی</option>
+        <option value="summary">خلاصه کتاب</option>
+        <option value="intro">معرفی کتاب</option>
+      </select>
+      <select id="filter-language" aria-label="زبان">
+        <option value="all">همه‌ی زبان‌ها</option>
+        <option value="fa">فارسی</option>
+        <option value="translated">ترجمه</option>
+      </select>
+      <select id="filter-rating" aria-label="امتیاز">
+        <option value="all">همه‌ی امتیازها</option>
+        <option value="top">کتاب‌های برتر</option>
+        <option value="special">پیشنهاد ویژه</option>
+      </select>
     </div>
 
-    <section class="related-section" id="related-section" hidden>
-      <h2>آثاری که در کتاب‌باز معرفی شده</h2>
-      <div id="related-grid" class="book-grid"></div>
-    </section>
+    <div class="results-bar">
+      <span></span>
+      <span id="result-count">— کتاب</span>
+    </div>
+
+    <div id="book-grid" class="book-grid">
+      <p class="empty-state">در حال بارگذاری کتاب‌ها…</p>
+    </div>
   </main>
 
   <footer class="site-footer">
@@ -57,123 +87,83 @@
       </div>
       <div>
         <p style="margin:0 0 10px;font-weight:700;">دسترسی سریع</p>
-        <p style="margin:0 0 8px;"><a href="figures.html">مشاهیر</a></p>
-        <p style="margin:0 0 8px;"><a href="marginalia.html">حاشیه‌های کتاب</a></p>
+        <p style="margin:0 0 8px;"><a href="category.html?genre=novel">رمان و داستان</a></p>
+        <p style="margin:0 0 8px;"><a href="category.html?genre=poetry">شعر و ادبیات</a></p>
         <p style="margin:0;"><a href="https://t.me/kmketab" target="_blank" rel="noopener">کانال تلگرام</a></p>
       </div>
     </div>
     <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
   </footer>
 
+  <script src="https://unpkg.com/lucide@0.552.0/dist/umd/lucide.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/seo.js"></script>
   <script src="../js/books.js"></script>
-  <script src="../js/figures.js"></script>
   <script src="../js/bottom-nav.js"></script>
   <script>
-    (async function initFigurePage() {
+    (async function initCategoryPage() {
       KetabBazStorage.getUserId();
 
       const params = new URLSearchParams(window.location.search);
-      const figureId = params.get("id");
-      const contentEl = document.getElementById("figure-content");
-      const breadcrumbEl = document.getElementById("breadcrumb");
+      const grid = document.getElementById("book-grid");
+      const filterGenre = document.getElementById("filter-genre");
+      const filterType = document.getElementById("filter-type");
+      const filterLanguage = document.getElementById("filter-language");
+      const filterRating = document.getElementById("filter-rating");
+      const resultCount = document.getElementById("result-count");
 
-      if (!figureId) {
-        contentEl.innerHTML = `<p class="empty-state">شناسه‌ی مشخص نشده است.</p>`;
-        return;
-      }
-
-      let figures;
-      try {
-        figures = await KetabBazFigures.fetchFigures("../data/figures.json");
-      } catch (e) {
-        contentEl.innerHTML = `<p class="empty-state">مشکلی در بارگذاری اطلاعات پیش آمد.</p>`;
-        return;
-      }
-
-      const figure = KetabBazFigures.findById(figures, figureId);
-      if (!figure) {
-        contentEl.innerHTML = `<p class="empty-state">چهره‌ای با این شناسه پیدا نشد.</p>`;
-        return;
-      }
-
-      const pageUrl = window.location.href;
-
-      KetabBazSEO.applyPageMeta({
-        title: `${figure.name} - زندگی‌نامه | کتاب‌باز`,
-        description: figure.shortBio,
-        keywords: figure.tags,
-        image: `../${figure.photo}`,
-        url: pageUrl,
+      ["genre", "type", "language", "rating"].forEach((key) => {
+        const value = params.get(key);
+        const el = document.getElementById(`filter-${key}`);
+        if (value && el) el.value = value;
       });
 
-      KetabBazSEO.injectJSONLD(
-        {
-          "@context": "https://schema.org",
-          "@type": "Person",
-          name: figure.name,
-          description: figure.shortBio,
-          image: `../${figure.photo}`,
-          nationality: figure.nationality,
-          birthDate: figure.birthYear ? String(figure.birthYear) : undefined,
-          deathDate: figure.deathYear ? String(figure.deathYear) : undefined,
-          url: pageUrl,
-        },
-        "kb-person-schema"
+      let allBooks = [];
+      try {
+        allBooks = await KetabBazBooks.fetchBooks("../data/books.json");
+      } catch (e) {
+        grid.innerHTML = `<p class="empty-state">مشکلی در بارگذاری کتاب‌ها پیش آمد.</p>`;
+        return;
+      }
+
+      const activeGenre = filterGenre.value;
+      if (activeGenre !== "all") {
+        document.getElementById("category-title").textContent = KetabBazBooks.genreLabel(activeGenre);
+        document.getElementById("category-crumb").textContent = KetabBazBooks.genreLabel(activeGenre);
+        KetabBazSEO.applyPageMeta({
+          title: `${KetabBazBooks.genreLabel(activeGenre)} | کتاب‌باز`,
+          description: `فهرست کتاب‌های ${KetabBazBooks.genreLabel(activeGenre)} در کتاب‌باز.`,
+          url: window.location.href,
+        });
+      }
+
+      function currentFilters() {
+        return {
+          genre: filterGenre.value,
+          type: filterType.value,
+          language: filterLanguage.value,
+          rating: filterRating.value,
+        };
+      }
+
+      function applyFilters() {
+        const filtered = KetabBazBooks.filterBooks(allBooks, currentFilters());
+        KetabBazBooks.renderGrid(grid, filtered, { pagesPrefix: "", assetsPrefix: "../" });
+        resultCount.textContent = `${filtered.length} کتاب`;
+
+        const url = new URL(window.location.href);
+        Object.entries(currentFilters()).forEach(([k, v]) => {
+          if (v === "all") url.searchParams.delete(k);
+          else url.searchParams.set(k, v);
+        });
+        window.history.replaceState({}, "", url);
+      }
+
+      [filterGenre, filterType, filterLanguage, filterRating].forEach((el) =>
+        el.addEventListener("change", applyFilters)
       );
 
-      breadcrumbEl.innerHTML = `
-        <a href="../">خانه</a> ›
-        <a href="figures.html">مشاهیر</a> ›
-        <span>${figure.name}</span>
-      `;
-
-      const yearsLabel =
-        figure.birthYear && figure.deathYear
-          ? `${figure.birthYear} - ${figure.deathYear} میلادی`
-          : figure.birthYear
-          ? `متولد ${figure.birthYear}`
-          : "";
-
-      contentEl.innerHTML = `
-        <article class="figure-detail">
-          <div class="figure-detail__photo">
-            <img src="../${figure.photo}" alt="${figure.name}" width="220" height="220">
-          </div>
-          <div class="figure-detail__info">
-            <h1>${figure.name}</h1>
-            <p class="figure-detail__meta">
-              ${KetabBazFigures.categoryLabel(figure.category)}
-              ${figure.nationality ? ` · ${figure.nationality}` : ""}
-              ${yearsLabel ? ` · ${yearsLabel}` : ""}
-            </p>
-            <p class="figure-detail__bio">${figure.biography}</p>
-            <div class="book-detail__tags">
-              ${(figure.tags || []).map((t) => `<span class="tag tag--muted">${t}</span>`).join("")}
-            </div>
-          </div>
-        </article>
-      `;
-
-      // کتاب‌های مرتبط با این چهره که در کتاب‌باز معرفی شده‌اند
-      if (figure.relatedBookIds && figure.relatedBookIds.length) {
-        try {
-          const books = await KetabBazBooks.fetchBooks("../data/books.json");
-          const related = figure.relatedBookIds
-            .map((id) => KetabBazBooks.findById(books, id))
-            .filter(Boolean);
-          if (related.length) {
-            document.getElementById("related-section").hidden = false;
-            KetabBazBooks.renderGrid(document.getElementById("related-grid"), related, {
-              pagesPrefix: "",
-              assetsPrefix: "../",
-            });
-          }
-        } catch (e) {
-          /* کتاب‌های مرتبط اختیاری هستند؛ در صورت خطا نادیده گرفته می‌شود */
-        }
-      }
+      applyFilters();
     })();
   </script>
 </body>
