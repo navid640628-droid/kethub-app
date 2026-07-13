@@ -82,6 +82,7 @@
     <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
   </footer>
 
+  <script src="https://unpkg.com/lucide@0.552.0/dist/umd/lucide.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/library.js"></script>
   <script src="../js/seo.js"></script>
@@ -111,7 +112,7 @@
 
       function coverOrIcon(entry) {
         if (entry.cover) return `<img src="../${entry.cover}" alt="">`;
-        return "📖";
+        return `<i data-lucide="book" style="width:26px;height:26px;color:var(--color-text-muted);"></i>`;
       }
 
       function renderWantCard(entry) {
@@ -197,7 +198,10 @@
       function renderReadCard(entry) {
         const rating = entry.rating || 0;
         const stars = [1, 2, 3, 4, 5]
-          .map((n) => `<span class="star ${n <= rating ? "is-filled" : ""}" data-action="rate" data-id="${entry.id}" data-value="${n}">★</span>`)
+          .map(
+            (n) =>
+              `<span class="star ${n <= rating ? "is-filled" : ""}" data-action="rate" data-id="${entry.id}" data-value="${n}"><i data-lucide="star"></i></span>`
+          )
           .join("");
         return `
           <article class="library-card">
@@ -260,6 +264,7 @@
           return;
         }
         listEl.innerHTML = entries.map((e) => RENDERERS[activeStatus](e)).join("");
+        if (window.lucide) window.lucide.createIcons({ root: listEl });
       }
 
       tabButtons.forEach((btn) => {
