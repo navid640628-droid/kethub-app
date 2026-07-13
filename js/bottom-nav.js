@@ -11,11 +11,11 @@
   const pages = inPagesFolder ? "" : "pages/";
 
   const items = [
-    { key: "books", label: "کتاب‌ها", icon: "📚", href: root },
-    { key: "podcasts", label: "پادکست", icon: "🎧", href: `${pages}podcasts.html` },
-    { key: "marginalia", label: "حاشیه‌ها", icon: "🗒", href: `${pages}marginalia.html` },
-    { key: "figures", label: "مشاهیر", icon: "🎭", href: `${pages}figures.html` },
-    { key: "library", label: "کتابخانه", icon: "🗂", href: `${pages}my-library.html` },
+    { key: "books", label: "کتاب‌ها", icon: "book-open", href: root },
+    { key: "podcasts", label: "پادکست", icon: "headphones", href: `${pages}podcasts.html` },
+    { key: "marginalia", label: "حاشیه‌ها", icon: "sticky-note", href: `${pages}marginalia.html` },
+    { key: "figures", label: "مشاهیر", icon: "users", href: `${pages}figures.html` },
+    { key: "library", label: "کتابخانه", icon: "library", href: `${pages}my-library.html` },
   ];
 
   const path = window.location.pathname;
@@ -43,7 +43,7 @@
     .map(
       (item) => `
       <a class="bottom-nav__item ${isActive(item) ? "is-active" : ""}" href="${item.href}">
-        <span class="bottom-nav__icon" aria-hidden="true">${item.icon}</span>
+        <i class="bottom-nav__icon" data-lucide="${item.icon}" aria-hidden="true"></i>
         <span class="bottom-nav__label">${item.label}</span>
       </a>
     `
@@ -52,4 +52,6 @@
 
   document.body.appendChild(nav);
   document.body.classList.add("has-bottom-nav");
+
+  if (window.lucide) window.lucide.createIcons();
 })();
