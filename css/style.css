@@ -389,13 +389,24 @@ button {
 }
 
 .fav-btn {
-  font-size: 1.25rem;
   color: var(--color-text-muted);
   transition: transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fav-icon {
+  width: 20px;
+  height: 20px;
 }
 
 .fav-btn.is-active {
   color: var(--color-danger);
+}
+
+.fav-btn.is-active .fav-icon {
+  fill: currentColor;
 }
 
 .fav-btn:active {
@@ -618,7 +629,6 @@ button {
 }
 
 .kb-btn {
-  font-size: 1.25rem;
   color: var(--color-primary-dark);
   width: 42px;
   height: 42px;
@@ -627,6 +637,11 @@ button {
   align-items: center;
   justify-content: center;
   transition: background 0.15s;
+}
+
+.kb-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .kb-btn:hover {
@@ -638,7 +653,12 @@ button {
   height: 56px;
   background: var(--color-primary);
   color: #fff;
-  font-size: 1.4rem;
+}
+
+.kb-btn--play svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
 }
 
 .kb-btn--play:hover {
@@ -656,6 +676,11 @@ button {
   align-items: center;
   gap: 8px;
   color: var(--color-text-muted);
+}
+
+.kb-player__volume svg {
+  width: 18px;
+  height: 18px;
 }
 
 .kb-player__volume input[type="range"] {
@@ -732,6 +757,12 @@ button {
   font-size: 0.78rem;
   color: var(--color-accent);
   display: none;
+  align-items: center;
+  gap: 4px;
+}
+
+.kb-chapter-item.is-active .kb-chapter-item__playing {
+  display: inline-flex;
 }
 
 /* ---------------- Podcast / audiobook lists ---------------- */
@@ -834,8 +865,9 @@ body.has-bottom-nav {
 }
 
 .bottom-nav__icon {
-  font-size: 1.3rem;
-  line-height: 1;
+  width: 22px;
+  height: 22px;
+  stroke-width: 2px;
 }
 
 .bottom-nav__item.is-active {
@@ -1224,16 +1256,25 @@ body.has-bottom-nav {
   display: flex;
   gap: 4px;
   margin-bottom: 8px;
-  font-size: 1.2rem;
   cursor: pointer;
 }
 
 .rating-stars .star {
   color: var(--color-border);
+  display: inline-flex;
+}
+
+.rating-stars .star svg {
+  width: 20px;
+  height: 20px;
 }
 
 .rating-stars .star.is-filled {
   color: var(--color-accent);
+}
+
+.rating-stars .star.is-filled svg {
+  fill: currentColor;
 }
 
 .library-card textarea {
