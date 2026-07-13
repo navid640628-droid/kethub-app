@@ -3,7 +3,7 @@
  * سرویس ورکر کتاب‌باز — کش کردن پوسته‌ی برنامه برای بارگذاری سریع‌تر و کارکرد آفلاین
  */
 
-const CACHE_NAME = "ketabbaz-cache-v5";
+const CACHE_NAME = "ketabbaz-cache-v6";
 
 const APP_SHELL = [
   "./index.html",
