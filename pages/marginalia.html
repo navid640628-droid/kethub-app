@@ -63,6 +63,7 @@
     <div class="site-footer__bottom container">© کتاب‌باز — تمام حقوق محفوظ است.</div>
   </footer>
 
+  <script src="https://unpkg.com/lucide@0.552.0/dist/umd/lucide.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/seo.js"></script>
   <script src="../js/books.js"></script>
@@ -93,7 +94,7 @@
           <article class="marginalia-card">
             ${
               item.bookId
-                ? `<a class="marginalia-card__book" href="book.html?id=${item.bookId}">📖 ${item.bookTitle}</a>`
+                ? `<a class="marginalia-card__book" href="book.html?id=${item.bookId}"><i data-lucide="book" style="width:14px;height:14px;vertical-align:-2px;"></i> ${item.bookTitle}</a>`
                 : ""
             }
             <p class="marginalia-card__text">${item.text}</p>
@@ -104,6 +105,7 @@
         `
           )
           .join("");
+        if (window.lucide) window.lucide.createIcons({ root: list });
       } catch (e) {
         list.innerHTML = `<p class="empty-state">مشکلی در بارگذاری حاشیه‌ها پیش آمد.</p>`;
       }
