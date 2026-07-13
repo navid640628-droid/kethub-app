@@ -58,6 +58,8 @@
 
   applyFilters();
 
+  if (window.lucide) window.lucide.createIcons();
+
   // ثبت Service Worker برای قابلیت PWA
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
